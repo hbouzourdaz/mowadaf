@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مُعبّي الإكسل — لوحة التحكم</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;800;900&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        md: {
+                            primary: '#f5d56d', // Premium Gold
+                            onPrimary: '#1c1b1f',
+                            primaryContainer: '#3d341c',
+                            onPrimaryContainer: '#ffe082',
+                            secondary: '#a4a7ab',
+                            secondaryContainer: '#2b2930',
+                            onSecondaryContainer: '#e6e1e5',
+                            surface: '#0f1115', // Luxury Dark
+                            surfaceContainer: '#1e2025',
+                            error: '#ffb4ab',
+                        },
+                        gold: '#f5d56d'
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+
+<body>
+    <div class="app-container admin-app">
+        <header class="app-header admin-topbar">
+            <div class="admin-topbar-leading">
+                <div class="admin-brand">
+                    <div class="admin-brand-mark" aria-hidden="true">
+                        <i class="fa-solid fa-table-cells-large"></i>
+                    </div>
+                    <div class="admin-brand-text">
+                        <span class="admin-brand-title">مُعبّي الإكسل</span>
+                        <span class="admin-brand-sub">تطبيق سطح المكتب</span>
+                    </div>
+                </div>
+            </div>
+            <div class="header-metadata admin-meta-chips">
+                <div class="meta-item">
+                    <span class="meta-label">الأستاذ</span>
+                    <span id="teacher-name" class="meta-value">...</span>
+                </div>
+                <div class="meta-item">
+                    <span class="meta-label">المؤسسة</span>
+                    <span id="school-name" class="meta-value">...</span>
+                </div>
+                <div class="meta-item">
+                    <span class="meta-label">السنة</span>
+                    <span id="academic-year" class="meta-value">...</span>
+                </div>
+                <div class="meta-item">
+                    <span class="meta-label">الفصل</span>
+                    <span id="semester-name" class="meta-value">...</span>
+                </div>
+            </div>
+            <div class="header-actions admin-header-actions">
+                <button id="theme-toggle-btn" class="btn btn-icon-label btn-secondary btn-admin" title="تبديل المظهر" aria-label="تبديل المظهر">
+                    <span class="icon">?</span>
+                    <span class="btn-text">المظهر</span>
+                </button>
+                <button id="settings-btn" class="btn btn-icon-label btn-secondary btn-admin" title="الإعدادات" aria-label="الإعدادات">
+                    <span class="icon">?</span>
+                    <span class="btn-text">الإعدادات</span>
+                </button>
+                <button id="select-file-btn" class="btn btn-icon-label btn-primary btn-admin btn-admin-primary" title="فتح ملف" aria-label="فتح ملف">
+                    <span class="icon">?</span>
+                    <span class="btn-text">فتح ملف</span>
+                </button>
+            </div>
+        </header>
+
+        <main class="app-main">
+            <div id="welcome-screen" class="welcome-screen admin-welcome">
+                <div class="welcome-content admin-welcome-card">
+                    <div class="welcome-icon admin-welcome-icon" aria-hidden="true"><i class="fa-solid fa-gauge-high"></i></div>
+                    <p class="admin-welcome-kicker">لوحة التحكم</p>
+                    <h2>مرحباً بك في ورشة التحرير</h2>
+                    <p>افتح ملف Excel لعرض الأوراق، تعديل الدرجات، وتطبيق التقديرات وفق القواعد.</p>
+                    <div class="welcome-actions">
+                        <button id="welcome-open-btn" class="btn btn-primary btn-admin btn-admin-primary">
+                            <span class="icon"><i class="fa-solid fa-folder-open"></i></span>
+                            فتح ملف
+                        </button>
+                        <button id="recent-file-btn" class="btn btn-secondary btn-admin" disabled title="يتاح بعد فتح ملف مرة واحدة على الأقل">
+                            <span class="icon"><i class="fa-solid fa-clock-rotate-left"></i></span>
+                            آخر ملف
+                        </button>
+                    </div>
+                    <div class="welcome-hint">
+                        <p>يمكنك أيضاً سحب ملف xlsx وإفلاته في النافذة.</p>
+                    </div>
+                    <div class="shortcuts-hint">
+                        <span><kbd>Ctrl</kbd>+<kbd>O</kbd> فتح</span>
+                        <span><kbd>Ctrl</kbd>+<kbd>S</kbd> حفظ</span>
+                        <span><kbd>Ctrl</kbd>+<kbd>F</kbd> بحث</span>
+                        <span><kbd>Esc</kbd> إلغاء</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Drag & Drop Overlay -->
+            <div id="drop-overlay" class="drop-overlay hidden">
+                <div class="drop-overlay-content">
+                    <span class="drop-icon" aria-hidden="true"><i class="fa-solid fa-file-arrow-up"></i></span>
+                    <p>أفلت ملف Excel هنا</p>
+                </div>
+            </div>
+
+            <div id="editor-screen" class="editor-screen hidden">
+
+                <div class="editor-layout editor-layout-three">
+                    <nav class="app-sidebar-rail" aria-label="اختصارات سريعة">
+                        <button type="button" class="rail-btn rail-btn-active" id="rail-focus-editor" title="التركيز على الجدول" aria-label="التركيز على الجدول">
+                            <i class="fa-solid fa-table" aria-hidden="true"></i>
+                            <span class="rail-btn-label">الجدول</span>
+                        </button>
+                        <button type="button" class="rail-btn" id="rail-open-analysis" title="تحليل النتائج" aria-label="تحليل النتائج">
+                            <i class="fa-solid fa-chart-line" aria-hidden="true"></i>
+                            <span class="rail-btn-label">تحليل</span>
+                        </button>
+                    </nav>
+
+                    <aside class="sheets-sidebar admin-sidebar app-sidebar-panel" aria-label="المؤشرات والتصفية والمتابعة">
+                        <div class="sidebar-panel-scroll">
+                            <details class="sidebar-section">
+                                <summary class="sidebar-section-head">
+                                    <i class="fa-solid fa-gauge-high" aria-hidden="true"></i>
+                                    <span>مؤشرات سريعة</span>
+                                    <i class="fa-solid fa-chevron-down chev" aria-hidden="true"></i>
+                                </summary>
+                                <div class="sidebar-section-body">
+                                    <div class="summary-strip summary-strip-sidebar" aria-label="ملخص الورقة">
+                                        <div class="summary-item">
+                                            <span class="summary-icon" aria-hidden="true"><i class="fa-solid fa-users"></i></span>
+                                            <span class="summary-label">التلاميذ</span>
+                                            <strong id="summary-total">0</strong>
+                                        </div>
+                                        <div class="summary-item">
+                                            <span class="summary-icon" aria-hidden="true"><i class="fa-solid fa-circle-exclamation"></i></span>
+                                            <span class="summary-label">قيم ناقصة</span>
+                                            <strong id="summary-missing">0</strong>
+                                        </div>
+                                        <div class="summary-item">
+                                            <span class="summary-icon" aria-hidden="true"><i class="fa-solid fa-pen-to-square"></i></span>
+                                            <span class="summary-label">تعديلات</span>
+                                            <strong id="summary-changes">0</strong>
+                                        </div>
+                                        <div class="summary-item">
+                                            <span class="summary-icon" aria-hidden="true"><i class="fa-solid fa-chart-simple"></i></span>
+                                            <span class="summary-label">المعدل</span>
+                                            <strong id="summary-average">0.00</strong>
+                                        </div>
+                                        <div class="summary-item">
+                                            <span class="summary-icon" aria-hidden="true"><i class="fa-solid fa-scale-balanced"></i></span>
+                                            <span class="summary-label">مقارنة عامة</span>
+                                            <strong id="summary-comparison">-</strong>
+                                        </div>
+                                    </div>
+                                </div>
+                            </details>
+
+                            <details class="sidebar-section" open>
+                                <summary class="sidebar-section-head">
+                                    <i class="fa-solid fa-filter" aria-hidden="true"></i>
+                                    <span>تصفية النتائج</span>
+                                    <i class="fa-solid fa-chevron-down chev" aria-hidden="true"></i>
+                                </summary>
+                                <div class="sidebar-section-body">
+                                    <div class="results-tools results-tools-sidebar" aria-label="مرشحات النتائج">
+                                        <div class="filter-pills" id="result-filters">
+                                            <button type="button" class="filter-pill active" data-filter="all">الكل</button>
+                                            <button type="button" class="filter-pill" data-filter="below10">أقل من 10</button>
+                                            <button type="button" class="filter-pill" data-filter="between10and12">10 إلى 12</button>
+                                            <button type="button" class="filter-pill" data-filter="above15">فوق 15</button>
+                                            <button type="button" class="filter-pill" data-filter="missing">بدون نقطة</button>
+                                            <button type="button" class="filter-pill" data-filter="invalid">قيم خاطئة</button>
+                                            <button type="button" class="filter-pill" data-filter="noEstimate">دون تقدير</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </details>
+
+                            <details class="sidebar-section">
+                                <summary class="sidebar-section-head">
+                                    <i class="fa-solid fa-clipboard-list" aria-hidden="true"></i>
+                                    <span>المتابعة والرؤى</span>
+                                    <i class="fa-solid fa-chevron-down chev" aria-hidden="true"></i>
+                                </summary>
+                                <div class="sidebar-section-body">
+                                    <div class="sidebar-quick-actions">
+                                        <button type="button" id="remedial-report-btn" class="btn btn-secondary btn-admin btn-block" title="تقرير تدخل علاجي">
+                                            <span class="icon"><i class="fa-solid fa-stethoscope"></i></span>
+                                            <span class="btn-text">تدخل علاجي</span>
+                                        </button>
+                                        <button type="button" id="toggle-insights-btn" class="btn btn-secondary btn-admin btn-block" title="إظهار أو إخفاء المتابعة">
+                                            <span class="icon"><i class="fa-solid fa-thumbtack"></i></span>
+                                            <span class="btn-text">المتابعة</span>
+                                        </button>
+                                    </div>
+                                    <div id="insights-panel" class="insights-panel insights-panel-sidebar">
+                                        <section>
+                                            <h4>المتصدرون</h4>
+                                            <div id="inline-top-list" class="mini-list"></div>
+                                        </section>
+                                        <section>
+                                            <h4>تنبيهات المخاطر</h4>
+                                            <div id="inline-risk-list" class="mini-list"></div>
+                                        </section>
+                                        <section>
+                                            <h4>قيم ناقصة</h4>
+                                            <div id="missing-values-list" class="mini-list"></div>
+                                        </section>
+                                        <section>
+                                            <h4>سجل التعديلات</h4>
+                                            <div id="change-log-list" class="mini-list"></div>
+                                        </section>
+                                    </div>
+                                </div>
+                            </details>
+                        </div>
+                    </aside>
+
+                    <div class="editor-content admin-workspace workspace-main">
+                        <div class="admin-workspace-heading admin-workspace-heading-compact">
+                            <h2 class="admin-page-title">ورشة الدرجات</h2>
+                            <nav class="admin-breadcrumb" aria-label="مسار الصفحة">
+                                <span>لوحة التحكم</span>
+                                <span class="admin-bc-sep" aria-hidden="true">/</span>
+                                <span class="admin-bc-current">محرر البيانات</span>
+                            </nav>
+                        </div>
+                        <div class="editor-toolbar admin-toolbar-strip toolbar-compact toolbar-with-sheets">
+                            <div class="file-info">
+                                <span class="file-name" id="current-file-name">filename.xlsx</span>
+                                <span class="badge-row">
+                                    <span class="badge" id="current-sheet-name">القسم الحالي</span>
+                                    <span id="save-state" class="save-state saved">محفوظ</span>
+                                </span>
+                            </div>
+                            <div class="toolbar-sheet-picker">
+                                <label for="sheet-select" class="sheet-select-label">القسم</label>
+                                <select id="sheet-select" class="sheet-select" aria-label="اختيار القسم"></select>
+                                <span id="sheets-count" class="sheet-select-meta" aria-live="polite"></span>
+                            </div>
+                            <div class="search-box">
+                                <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                                <input type="text" id="search-input" placeholder="ابحث عن تلميذ...">
+                                <button type="button" id="clear-search-btn" class="search-clear hidden" title="مسح البحث" aria-label="مسح البحث">×</button>
+                                <span id="search-count" class="search-count">0</span>
+                            </div>
+                            <div class="toolbar-actions toolbar-actions-compact">
+                                <button type="button" id="apply-estimates-btn" class="btn btn-secondary btn-admin btn-toolbar-tight" title="توليد التقديرات" aria-label="توليد التقديرات">
+                                    <span class="icon"><i class="fa-solid fa-wand-magic-sparkles"></i></span>
+                                    <span class="btn-text">توليد التقديرات</span>
+                                </button>
+                                <button type="button" id="save-file-btn" class="btn btn-icon-label btn-success btn-admin btn-toolbar-tight" title="حفظ وتصدير" aria-label="حفظ وتصدير">
+                                    <span class="icon"><i class="fa-solid fa-floppy-disk"></i></span>
+                                    <span class="btn-text">حفظ</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="editor-main-stack" id="editor-main-stack">
+                        <button type="button" id="view-analysis-btn" class="sr-only" tabindex="-1">تحليل النتائج</button>
+                        <div id="editor-table-wrap" class="editor-table-wrap">
+                        <div class="table-container table-container-main">
+                            <table id="excel-table">
+                                <thead id="table-head"></thead>
+                                <tbody id="table-body"></tbody>
+                            </table>
+                        </div>
+                        </div>
+
+        <!-- Advanced Analysis Dashboard (v5 Ground-up Redesign) -->
+        <div id="analysis-screen" class="analysis-screen hidden">
+            <!-- Sidebar Navigation -->
+            <aside class="ana-sidebar no-print">
+                <div class="ana-logo">
+                    <div class="ana-logo-icon"><i class="fa-solid fa-bolt"></i></div>
+                    <div class="ana-logo-text">
+                        <span>التحليل الذكي</span>
+                        <small>V5 PREMIUM</small>
+                    </div>
+                </div>
+                
+                <nav class="ana-nav">
+                    <button class="ana-tab-btn active" data-tab="overview">
+                        <i class="fa-solid fa-grip-vertical"></i>
+                        <span>نظرة عامة</span>
+                    </button>
+                    <button class="ana-tab-btn" data-tab="performance">
+                        <i class="fa-solid fa-chart-line"></i>
+                        <span>الأداء العام</span>
+                    </button>
+                    <button class="ana-tab-btn" data-tab="remedial">
+                        <i class="fa-solid fa-stethoscope"></i>
+                        <span>خطة التدخل</span>
+                    </button>
+                    <button class="ana-tab-btn" data-tab="students">
+                        <i class="fa-solid fa-award"></i>
+                        <span>التلاميذ</span>
+                    </button>
+                </nav>
+
+                <div class="ana-sidebar-footer">
+                    <button id="print-report-btn" class="ana-action-btn primary">
+                        <i class="fa-solid fa-print"></i>
+                        <span>طباعة التقرير</span>
+                    </button>
+                    <button id="close-analysis-btn" class="ana-action-btn secondary">
+                        <i class="fa-solid fa-arrow-right-from-bracket"></i>
+                        <span>العودة للمحرر</span>
+                    </button>
+                </div>
+            </aside>
+
+            <!-- Main Content Area -->
+            <main class="ana-main-content">
+                <!-- Top Header -->
+                <header class="ana-content-header no-print">
+                    <div class="ana-header-info">
+                        <h2 id="analysis-class-name">اسم القسم</h2>
+                        <p id="analysis-subject-name">المادة الحالية</p>
+                    </div>
+                    <div class="ana-header-actions">
+                        <div class="ana-select-wrapper">
+                            <i class="fa-solid fa-filter"></i>
+                            <select id="analysis-select"></select>
+                        </div>
+                        <div class="ana-update-chip">
+                            <span class="pulse-dot"></span>
+                            تحديث تلقائي مفعل
+                        </div>
+                    </div>
+                </header>
+
+                <!-- Dynamic Tab Content -->
+                <div class="ana-tab-viewport scrollbar-premium">
+                    
+                    <!-- Tab: Overview -->
+                    <section id="ana-tab-overview" class="ana-tab-content active">
+                        <div class="ana-stats-grid">
+                            <div class="ana-mini-card" data-variant="gold">
+                                <div class="ana-card-head">
+                                    <span class="label">نسبة النجاح</span>
+                                    <i class="fa-solid fa-percent"></i>
+                                </div>
+                                <div class="ana-card-body">
+                                    <h3 id="ana-pass-rate">0%</h3>
+                                    <div class="ana-progress"><div id="ana-pass-bar" style="width: 0%"></div></div>
+                                </div>
+                            </div>
+                            <div class="ana-mini-card" data-variant="blue">
+                                <div class="ana-card-head">
+                                    <span class="label">المعدل العام</span>
+                                    <i class="fa-solid fa-calculator"></i>
+                                </div>
+                                <div class="ana-card-body">
+                                    <h3 id="ana-class-avg">0.00</h3>
+                                    <p class="hint">متوسط علامات القسم</p>
+                                </div>
+                            </div>
+                            <div class="ana-mini-card" data-variant="green">
+                                <div class="ana-card-head">
+                                    <span class="label">أعلى علامة</span>
+                                    <i class="fa-solid fa-crown"></i>
+                                </div>
+                                <div class="ana-card-body">
+                                    <h3 id="ana-highest">0.00</h3>
+                                    <p id="ana-highest-name" class="name">--</p>
+                                </div>
+                            </div>
+                            <div class="ana-mini-card" data-variant="red">
+                                <div class="ana-card-head">
+                                    <span class="label">أدنى علامة</span>
+                                    <i class="fa-solid fa-triangle-exclamation"></i>
+                                </div>
+                                <div class="ana-card-body">
+                                    <h3 id="ana-lowest">0.00</h3>
+                                    <p id="ana-lowest-name" class="name">--</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="ana-split-grid">
+                            <!-- AI Insights Card -->
+                            <div class="ana-glass-panel ai-insights">
+                                <div class="panel-head">
+                                    <h3><i class="fa-solid fa-brain"></i> التحليل البيداغوجي الذكي</h3>
+                                    <button class="ana-icon-btn" title="تحديث التحليل"><i class="fa-solid fa-arrows-rotate"></i></button>
+                                </div>
+                                <div id="ana-report-text" class="panel-body ai-text-content"></div>
+                            </div>
+
+                            <!-- Distribution Chart -->
+                            <div class="ana-glass-panel distribution-chart">
+                                <div class="panel-head">
+                                    <h3><i class="fa-solid fa-chart-pie"></i> توزيع المستويات</h3>
+                                </div>
+                                <div class="panel-body chart-container">
+                                    <canvas id="analysis-chart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Global Summary (Conditional) -->
+                        <div id="global-summary-container" class="hidden ana-glass-panel">
+                            <div class="panel-head">
+                                <h3><i class="fa-solid fa-layer-group"></i> مقارنة شاملة للأقسام</h3>
+                            </div>
+                            <div class="panel-body p-0">
+                                <table class="ana-modern-table">
+                                    <thead>
+                                        <tr>
+                                            <th>القسم</th>
+                                            <th>تعداد التلاميذ</th>
+                                            <th>المعدل</th>
+                                            <th>نسبة النجاح</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="global-summary-body"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Tab: Performance (To be filled by JS) -->
+                    <section id="ana-tab-performance" class="ana-tab-content">
+                        <div class="ana-placeholder">
+                            <i class="fa-solid fa-chart-area"></i>
+                            <p>تحليل الأداء التفصيلي قيد التطوير...</p>
+                        </div>
+                    </section>
+
+                    <!-- Tab: Remedial (To be filled by JS) -->
+                    <section id="ana-tab-remedial" class="ana-tab-content">
+                        <div class="ana-remedial-header">
+                            <h3><i class="fa-solid fa-hand-holding-medical"></i> الحالات التي تحتاج تدخل علاجي</h3>
+                            <p>تلاميذ حصلوا على معدل أقل من 10/20</p>
+                        </div>
+                        <div id="ana-remedial-list" class="ana-remedial-grid"></div>
+                    </section>
+
+                    <!-- Tab: Students -->
+                    <section id="ana-tab-students" class="ana-tab-content">
+                        <div class="ana-students-header">
+                            <h3><i class="fa-solid fa-medal"></i> لوحة الشرف</h3>
+                            <p>ترتيب التلاميذ حسب المعدل</p>
+                        </div>
+                        <div id="ana-top-students" class="ana-honor-grid"></div>
+                    </section>
+
+                </div>
+            </main>
+        </div>
+            </div>
+        </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Print Area (Exactly as in analyse.html) -->
+        <div id="printArea" class="hidden flex-col w-full bg-white text-black font-cairo">
+            <div class="text-center mb-6 border-b-2 border-md-primary pb-3 shrink-0 flex justify-between items-center px-4">
+                <div class="w-24 text-right"><i class="fa-solid fa-graduation-cap text-gray-300 text-5xl"></i></div>
+                <div class="flex-grow">
+                    <h2 class="font-bold text-xl mb-1">الجمهورية الجزائرية الديمقراطية الشعبية</h2>
+                    <h3 class="font-semibold text-lg mb-2 text-gray-700">وزارة التربية الوطنية</h3>
+                    <h1 class="text-2xl font-black text-md-primary bg-md-primary/10 inline-block px-6 py-2 rounded-full" id="printMainTitle">التقرير التحليلي والبيداغوجي لنتائج الفصل</h1>
+                </div>
+                <div class="w-24 text-left">
+                    <p class="text-xs font-bold text-gray-500 text-left">السنة الدراسية<br><span class="text-sm text-gray-800">2025/2026</span></p>
+                </div>
+            </div>
+            <div class="flex justify-between bg-teal-50 rounded-xl border border-teal-200 shrink-0 overflow-hidden mb-6 divide-x divide-x-reverse divide-teal-200">
+                <div class="text-center p-3 flex-1"><p class="text-xs text-teal-700 font-bold mb-1">القسم</p><p class="font-black text-lg text-teal-950 truncate" id="p-class">-</p></div>
+                <div class="text-center p-3 flex-1"><p class="text-xs text-teal-700 font-bold mb-1">المادة</p><p class="font-black text-lg text-teal-950 truncate" id="p-subject">-</p></div>
+                <div class="text-center p-3 flex-1 bg-teal-600 text-white"><p class="text-xs text-teal-100 font-bold mb-1">تعداد التلاميذ</p><p class="font-black text-2xl" id="p-count">-</p></div>
+            </div>
+            <div class="grid grid-cols-4 gap-4 mb-6 shrink-0">
+                <div class="border-l-4 border-l-blue-500 rounded-lg p-3 bg-gray-50 border border-gray-100 flex items-center justify-between"><div><p class="text-xs font-bold text-gray-500">نسبة النجاح</p><p class="text-2xl font-black text-blue-700 mt-1" id="p-rate">0%</p></div><i class="fa-solid fa-percent text-blue-200 text-3xl"></i></div>
+                <div class="border-l-4 border-l-purple-500 rounded-lg p-3 bg-gray-50 border border-gray-100 flex items-center justify-between"><div><p class="text-xs font-bold text-gray-500">المعدل العام</p><p class="text-2xl font-black text-purple-700 mt-1" id="p-avg">0.00</p></div><i class="fa-solid fa-chart-pie text-purple-200 text-3xl"></i></div>
+                <div class="border-l-4 border-l-green-500 rounded-lg p-3 bg-gray-50 border border-gray-100 flex items-center justify-between"><div><p class="text-xs font-bold text-gray-500">أعلى علامة</p><p class="text-2xl font-black text-green-700 mt-1" id="p-high">0.00</p></div><i class="fa-solid fa-arrow-trend-up text-green-200 text-3xl"></i></div>
+                <div class="border-l-4 border-l-red-500 rounded-lg p-3 bg-gray-50 border border-gray-100 flex items-center justify-between"><div><p class="text-xs font-bold text-gray-500">أدنى علامة</p><p class="text-2xl font-black text-red-700 mt-1" id="p-low">0.00</p></div><i class="fa-solid fa-arrow-trend-down text-red-200 text-3xl"></i></div>
+            </div>
+            <div class="grid grid-cols-5 gap-4 mb-4 shrink-0">
+                <div class="col-span-3 rounded-xl flex flex-col p-4 bg-gray-50 border border-gray-200"><h3 class="font-black text-base border-b-2 border-md-primary pb-2 mb-3 text-md-primary flex items-center gap-2"><i class="fa-solid fa-pen-nib"></i> قراءة تحليلية للنتائج</h3><p id="p-ai" class="text-[14px] leading-relaxed text-gray-800 text-justify font-bold mt-1"></p></div>
+                <div class="col-span-2 flex flex-col gap-2">
+                    <div class="border border-gold/40 rounded-lg p-2 bg-[#fffbf0] flex flex-col"><h3 class="font-black text-sm border-b border-gold/30 pb-1 mb-1.5 text-[#b8860b] flex items-center justify-center gap-1"><i class="fa-solid fa-medal"></i>التلاميذ الأوائل </h3><div id="p-top" class="flex flex-col justify-center gap-1"></div></div>
+                    <div class="border border-red-200 rounded-lg p-2 bg-red-50/50 flex flex-col" id="p-bottom-container" style="display: none;"><h3 class="font-black text-sm border-b border-red-200 pb-1 mb-1.5 text-red-700 flex items-center justify-center gap-1"><i class="fa-solid fa-triangle-exclamation"></i>التلاميذ المتأخرون </h3><div id="p-bottom" class="flex flex-col justify-center gap-1"></div></div>
+                </div>
+            </div>
+            <div class="border border-gray-200 rounded-xl p-4 mb-6 flex-grow flex flex-col items-center justify-center">
+                 <h3 class="font-bold text-sm mb-4 text-center text-gray-800 bg-gray-50 py-2 px-6 rounded border border-gray-200">المنحنى البياني لمستويات التحصيل</h3>
+                 <img id="p-chart-img" style="max-height: 220px; width: auto; object-fit: contain;" />
+            </div>
+        </div>
+
+        <footer class="status-bar admin-statusbar">
+            <div id="status-text">جاهز</div>
+            <div id="stats-text"></div>
+        </footer>
+        <div id="a11y-live" class="sr-only" aria-live="polite"></div>
+
+        <div id="loader" class="loader-overlay hidden">
+            <div class="loader"></div>
+            <p>جاري المعالجة...</p>
+        </div>
+
+        <div id="toast" class="toast hidden">
+            <div class="toast-content">
+                <span id="toast-message"></span>
+            </div>
+        </div>
+
+        <div id="remedial-modal" class="loader-overlay hidden">
+            <div class="modal-content remedial-modal">
+                <div class="modal-header">
+                    <h2>تقرير التدخل العلاجي</h2>
+                    <button id="close-remedial" class="close-btn">&times;</button>
+                </div>
+                <div id="remedial-content" class="remedial-content"></div>
+            </div>
+        </div>
+
+        <!-- Settings Modal -->
+        <div id="settings-modal" class="loader-overlay hidden">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>قواعد التقديرات</h2>
+                    <button id="close-settings" class="close-btn">&times;</button>
+                </div>
+                <p class="modal-hint">قم بتحديد قواعد التقديرات التلقائية والتي سيتم حفظها في ملف Marks.txt.</p>
+                <div class="rules-table">
+                    <div class="rules-head">
+                        <span>من</span>
+                        <span>إلى</span>
+                        <span>التقدير</span>
+                        <span></span>
+                    </div>
+                    <div id="rules-container">
+                        <!-- Rules injected by JS -->
+                    </div>
+                </div>
+                <div class="modal-actions">
+                    <button id="add-rule-btn" class="btn btn-secondary">إضافة قاعدة +</button>
+                    <button id="save-rules-btn" class="btn btn-primary">حفظ وتطبيق</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="statsEngine.js"></script>
+    <script src="printManager.js"></script>
+    <script src="renderer.js"></script>
+</body>
+
+</html>
+
+
