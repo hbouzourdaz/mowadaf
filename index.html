@@ -1,578 +1,407 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
-
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>مُعبّي الإكسل — لوحة التحكم</title>
-    <link rel="stylesheet" href="style.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;800;900&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="theme-color" content="#047857">
+    <title>تطبيق الامتحانات المهنية 2026</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        md: {
-                            primary: '#f5d56d', // Premium Gold
-                            onPrimary: '#1c1b1f',
-                            primaryContainer: '#3d341c',
-                            onPrimaryContainer: '#ffe082',
-                            secondary: '#a4a7ab',
-                            secondaryContainer: '#2b2930',
-                            onSecondaryContainer: '#e6e1e5',
-                            surface: '#0f1115', // Luxury Dark
-                            surfaceContainer: '#1e2025',
-                            error: '#ffb4ab',
-                        },
-                        gold: '#f5d56d'
-                    }
-                }
-            }
-        }
-    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Tajawal', sans-serif; background-color: #e2e8f0; }
+        .hidden { display: none !important; }
+        /* إخفاء شريط التمرير لتبدو كتطبيق حقيقي */
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        .fade-in { animation: fadeIn 0.3s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: scale(0.98); } to { opacity: 1; transform: scale(1); } }
+        /* تحسينات لجدول المعلومات */
+        .info-table td, .info-table th { padding: 0.5rem; border: 1px solid #e2e8f0; }
+        .info-table th { background-color: #f1f5f9; font-weight: 700; color: #1e293b; }
+    </style>
 </head>
+<body class="bg-gray-200 flex items-center justify-center min-h-screen">
 
-<body>
-    <div class="app-container admin-app">
-        <header class="app-header admin-topbar">
-            <div class="admin-topbar-leading">
-                <div class="admin-brand">
-                    <div class="admin-brand-mark" aria-hidden="true">
-                        <i class="fa-solid fa-table-cells-large"></i>
+    <!-- إطار التطبيق: مخصص ليكون بحجم شاشة هاتف فقط (عرض أقصى 400px) -->
+    <div id="app-container" class="relative w-full h-screen max-w-[400px] mx-auto bg-slate-50 shadow-2xl overflow-hidden flex flex-col">
+        
+        <!-- شريط التطبيق العلوي -->
+        <header class="bg-emerald-700 text-white p-4 shadow-md z-20 flex-shrink-0 rounded-b-xl">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <div class="bg-white p-1.5 rounded-lg text-emerald-700">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                            <polyline points="14 2 14 8 20 8"></polyline>
+                        </svg>
                     </div>
-                    <div class="admin-brand-text">
-                        <span class="admin-brand-title">مُعبّي الإكسل</span>
-                        <span class="admin-brand-sub">تطبيق سطح المكتب</span>
+                    <div>
+                        <h1 class="text-lg font-bold leading-tight">توجيه الامتحانات 2026</h1>
+                        <p class="text-[10px] text-emerald-100 font-medium">النسخة المفصلة - وزارة التربية</p>
                     </div>
                 </div>
-            </div>
-            <div class="header-metadata admin-meta-chips">
-                <div class="meta-item">
-                    <span class="meta-label">الأستاذ</span>
-                    <span id="teacher-name" class="meta-value">...</span>
-                </div>
-                <div class="meta-item">
-                    <span class="meta-label">المؤسسة</span>
-                    <span id="school-name" class="meta-value">...</span>
-                </div>
-                <div class="meta-item">
-                    <span class="meta-label">السنة</span>
-                    <span id="academic-year" class="meta-value">...</span>
-                </div>
-                <div class="meta-item">
-                    <span class="meta-label">الفصل</span>
-                    <span id="semester-name" class="meta-value">...</span>
-                </div>
-            </div>
-            <div class="header-actions admin-header-actions">
-                <button id="theme-toggle-btn" class="btn btn-icon-label btn-secondary btn-admin" title="تبديل المظهر" aria-label="تبديل المظهر">
-                    <span class="icon">?</span>
-                    <span class="btn-text">المظهر</span>
-                </button>
-                <button id="settings-btn" class="btn btn-icon-label btn-secondary btn-admin" title="الإعدادات" aria-label="الإعدادات">
-                    <span class="icon">?</span>
-                    <span class="btn-text">الإعدادات</span>
-                </button>
-                <button id="select-file-btn" class="btn btn-icon-label btn-primary btn-admin btn-admin-primary" title="فتح ملف" aria-label="فتح ملف">
-                    <span class="icon">?</span>
-                    <span class="btn-text">فتح ملف</span>
-                </button>
             </div>
         </header>
 
-        <main class="app-main">
-            <div id="welcome-screen" class="welcome-screen admin-welcome">
-                <div class="welcome-content admin-welcome-card">
-                    <div class="welcome-icon admin-welcome-icon" aria-hidden="true"><i class="fa-solid fa-gauge-high"></i></div>
-                    <p class="admin-welcome-kicker">لوحة التحكم</p>
-                    <h2>مرحباً بك في ورشة التحرير</h2>
-                    <p>افتح ملف Excel لعرض الأوراق، تعديل الدرجات، وتطبيق التقديرات وفق القواعد.</p>
-                    <div class="welcome-actions">
-                        <button id="welcome-open-btn" class="btn btn-primary btn-admin btn-admin-primary">
-                            <span class="icon"><i class="fa-solid fa-folder-open"></i></span>
-                            فتح ملف
-                        </button>
-                        <button id="recent-file-btn" class="btn btn-secondary btn-admin" disabled title="يتاح بعد فتح ملف مرة واحدة على الأقل">
-                            <span class="icon"><i class="fa-solid fa-clock-rotate-left"></i></span>
-                            آخر ملف
-                        </button>
-                    </div>
-                    <div class="welcome-hint">
-                        <p>يمكنك أيضاً سحب ملف xlsx وإفلاته في النافذة.</p>
-                    </div>
-                    <div class="shortcuts-hint">
-                        <span><kbd>Ctrl</kbd>+<kbd>O</kbd> فتح</span>
-                        <span><kbd>Ctrl</kbd>+<kbd>S</kbd> حفظ</span>
-                        <span><kbd>Ctrl</kbd>+<kbd>F</kbd> بحث</span>
-                        <span><kbd>Esc</kbd> إلغاء</span>
-                    </div>
+        <!-- المساحة القابلة للتمرير (المحتوى) -->
+        <main class="flex-1 overflow-y-auto no-scrollbar pb-24 relative">
+            
+            <!-- إشعار عاجل (تنبيه التطبيق) -->
+            <div class="m-3 bg-red-600 text-white rounded-xl shadow-md p-3 flex items-start gap-3 animate-pulse">
+                <svg class="w-6 h-6 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                <div>
+                    <span class="font-bold text-sm block">آخر أجل للتسجيل: 31 ماي 2026</span>
+                    <span class="text-xs text-red-100">إيداع الطلب الإلكتروني إلزامي عبر الأرضية الرقمية</span>
                 </div>
             </div>
 
-            <!-- Drag & Drop Overlay -->
-            <div id="drop-overlay" class="drop-overlay hidden">
-                <div class="drop-overlay-content">
-                    <span class="drop-icon" aria-hidden="true"><i class="fa-solid fa-file-arrow-up"></i></span>
-                    <p>أفلت ملف Excel هنا</p>
-                </div>
-            </div>
-
-            <div id="editor-screen" class="editor-screen hidden">
-
-                <div class="editor-layout editor-layout-three">
-                    <nav class="app-sidebar-rail" aria-label="اختصارات سريعة">
-                        <button type="button" class="rail-btn rail-btn-active" id="rail-focus-editor" title="التركيز على الجدول" aria-label="التركيز على الجدول">
-                            <i class="fa-solid fa-table" aria-hidden="true"></i>
-                            <span class="rail-btn-label">الجدول</span>
-                        </button>
-                        <button type="button" class="rail-btn" id="rail-open-analysis" title="تحليل النتائج" aria-label="تحليل النتائج">
-                            <i class="fa-solid fa-chart-line" aria-hidden="true"></i>
-                            <span class="rail-btn-label">تحليل</span>
-                        </button>
-                    </nav>
-
-                    <aside class="sheets-sidebar admin-sidebar app-sidebar-panel" aria-label="المؤشرات والتصفية والمتابعة">
-                        <div class="sidebar-panel-scroll">
-                            <details class="sidebar-section">
-                                <summary class="sidebar-section-head">
-                                    <i class="fa-solid fa-gauge-high" aria-hidden="true"></i>
-                                    <span>مؤشرات سريعة</span>
-                                    <i class="fa-solid fa-chevron-down chev" aria-hidden="true"></i>
-                                </summary>
-                                <div class="sidebar-section-body">
-                                    <div class="summary-strip summary-strip-sidebar" aria-label="ملخص الورقة">
-                                        <div class="summary-item">
-                                            <span class="summary-icon" aria-hidden="true"><i class="fa-solid fa-users"></i></span>
-                                            <span class="summary-label">التلاميذ</span>
-                                            <strong id="summary-total">0</strong>
-                                        </div>
-                                        <div class="summary-item">
-                                            <span class="summary-icon" aria-hidden="true"><i class="fa-solid fa-circle-exclamation"></i></span>
-                                            <span class="summary-label">قيم ناقصة</span>
-                                            <strong id="summary-missing">0</strong>
-                                        </div>
-                                        <div class="summary-item">
-                                            <span class="summary-icon" aria-hidden="true"><i class="fa-solid fa-pen-to-square"></i></span>
-                                            <span class="summary-label">تعديلات</span>
-                                            <strong id="summary-changes">0</strong>
-                                        </div>
-                                        <div class="summary-item">
-                                            <span class="summary-icon" aria-hidden="true"><i class="fa-solid fa-chart-simple"></i></span>
-                                            <span class="summary-label">المعدل</span>
-                                            <strong id="summary-average">0.00</strong>
-                                        </div>
-                                        <div class="summary-item">
-                                            <span class="summary-icon" aria-hidden="true"><i class="fa-solid fa-scale-balanced"></i></span>
-                                            <span class="summary-label">مقارنة عامة</span>
-                                            <strong id="summary-comparison">-</strong>
-                                        </div>
-                                    </div>
-                                </div>
-                            </details>
-
-                            <details class="sidebar-section" open>
-                                <summary class="sidebar-section-head">
-                                    <i class="fa-solid fa-filter" aria-hidden="true"></i>
-                                    <span>تصفية النتائج</span>
-                                    <i class="fa-solid fa-chevron-down chev" aria-hidden="true"></i>
-                                </summary>
-                                <div class="sidebar-section-body">
-                                    <div class="results-tools results-tools-sidebar" aria-label="مرشحات النتائج">
-                                        <div class="filter-pills" id="result-filters">
-                                            <button type="button" class="filter-pill active" data-filter="all">الكل</button>
-                                            <button type="button" class="filter-pill" data-filter="below10">أقل من 10</button>
-                                            <button type="button" class="filter-pill" data-filter="between10and12">10 إلى 12</button>
-                                            <button type="button" class="filter-pill" data-filter="above15">فوق 15</button>
-                                            <button type="button" class="filter-pill" data-filter="missing">بدون نقطة</button>
-                                            <button type="button" class="filter-pill" data-filter="invalid">قيم خاطئة</button>
-                                            <button type="button" class="filter-pill" data-filter="noEstimate">دون تقدير</button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </details>
-
-                            <details class="sidebar-section">
-                                <summary class="sidebar-section-head">
-                                    <i class="fa-solid fa-clipboard-list" aria-hidden="true"></i>
-                                    <span>المتابعة والرؤى</span>
-                                    <i class="fa-solid fa-chevron-down chev" aria-hidden="true"></i>
-                                </summary>
-                                <div class="sidebar-section-body">
-                                    <div class="sidebar-quick-actions">
-                                        <button type="button" id="remedial-report-btn" class="btn btn-secondary btn-admin btn-block" title="تقرير تدخل علاجي">
-                                            <span class="icon"><i class="fa-solid fa-stethoscope"></i></span>
-                                            <span class="btn-text">تدخل علاجي</span>
-                                        </button>
-                                        <button type="button" id="toggle-insights-btn" class="btn btn-secondary btn-admin btn-block" title="إظهار أو إخفاء المتابعة">
-                                            <span class="icon"><i class="fa-solid fa-thumbtack"></i></span>
-                                            <span class="btn-text">المتابعة</span>
-                                        </button>
-                                    </div>
-                                    <div id="insights-panel" class="insights-panel insights-panel-sidebar">
-                                        <section>
-                                            <h4>المتصدرون</h4>
-                                            <div id="inline-top-list" class="mini-list"></div>
-                                        </section>
-                                        <section>
-                                            <h4>تنبيهات المخاطر</h4>
-                                            <div id="inline-risk-list" class="mini-list"></div>
-                                        </section>
-                                        <section>
-                                            <h4>قيم ناقصة</h4>
-                                            <div id="missing-values-list" class="mini-list"></div>
-                                        </section>
-                                        <section>
-                                            <h4>سجل التعديلات</h4>
-                                            <div id="change-log-list" class="mini-list"></div>
-                                        </section>
-                                    </div>
-                                </div>
-                            </details>
-                        </div>
-                    </aside>
-
-                    <div class="editor-content admin-workspace workspace-main">
-                        <div class="admin-workspace-heading admin-workspace-heading-compact">
-                            <h2 class="admin-page-title">ورشة الدرجات</h2>
-                            <nav class="admin-breadcrumb" aria-label="مسار الصفحة">
-                                <span>لوحة التحكم</span>
-                                <span class="admin-bc-sep" aria-hidden="true">/</span>
-                                <span class="admin-bc-current">محرر البيانات</span>
-                            </nav>
-                        </div>
-                        <div class="editor-toolbar admin-toolbar-strip toolbar-compact toolbar-with-sheets">
-                            <div class="file-info">
-                                <span class="file-name" id="current-file-name">filename.xlsx</span>
-                                <span class="badge-row">
-                                    <span class="badge" id="current-sheet-name">القسم الحالي</span>
-                                    <span id="save-state" class="save-state saved">محفوظ</span>
-                                </span>
-                            </div>
-                            <div class="toolbar-sheet-picker">
-                                <label for="sheet-select" class="sheet-select-label">القسم</label>
-                                <select id="sheet-select" class="sheet-select" aria-label="اختيار القسم"></select>
-                                <span id="sheets-count" class="sheet-select-meta" aria-live="polite"></span>
-                            </div>
-                            <div class="search-box">
-                                <i class="fa-solid fa-magnifying-glass search-icon"></i>
-                                <input type="text" id="search-input" placeholder="ابحث عن تلميذ...">
-                                <button type="button" id="clear-search-btn" class="search-clear hidden" title="مسح البحث" aria-label="مسح البحث">×</button>
-                                <span id="search-count" class="search-count">0</span>
-                            </div>
-                            <div class="toolbar-actions toolbar-actions-compact">
-                                <button type="button" id="apply-estimates-btn" class="btn btn-secondary btn-admin btn-toolbar-tight" title="توليد التقديرات" aria-label="توليد التقديرات">
-                                    <span class="icon"><i class="fa-solid fa-wand-magic-sparkles"></i></span>
-                                    <span class="btn-text">توليد التقديرات</span>
-                                </button>
-                                <button type="button" id="save-file-btn" class="btn btn-icon-label btn-success btn-admin btn-toolbar-tight" title="حفظ وتصدير" aria-label="حفظ وتصدير">
-                                    <span class="icon"><i class="fa-solid fa-floppy-disk"></i></span>
-                                    <span class="btn-text">حفظ</span>
-                                </button>
-                            </div>
-                        </div>
-
-                        <div class="editor-main-stack" id="editor-main-stack">
-                        <button type="button" id="view-analysis-btn" class="sr-only" tabindex="-1">تحليل النتائج</button>
-                        <div id="editor-table-wrap" class="editor-table-wrap">
-                        <div class="table-container table-container-main">
-                            <table id="excel-table">
-                                <thead id="table-head"></thead>
-                                <tbody id="table-body"></tbody>
-                            </table>
-                        </div>
-                        </div>
-
-        <!-- Advanced Analysis Dashboard (v5 Ground-up Redesign) -->
-        <div id="analysis-screen" class="analysis-screen hidden">
-            <!-- Sidebar Navigation -->
-            <aside class="ana-sidebar no-print">
-                <div class="ana-logo">
-                    <div class="ana-logo-icon"><i class="fa-solid fa-bolt"></i></div>
-                    <div class="ana-logo-text">
-                        <span>التحليل الذكي</span>
-                        <small>V5 PREMIUM</small>
-                    </div>
-                </div>
+            <!-- الشاشة 1: الرئيسية (إدخال البيانات) -->
+            <div id="tab-home" class="tab-content px-4 space-y-4 fade-in block">
                 
-                <nav class="ana-nav">
-                    <button class="ana-tab-btn active" data-tab="overview">
-                        <i class="fa-solid fa-grip-vertical"></i>
-                        <span>نظرة عامة</span>
-                    </button>
-                    <button class="ana-tab-btn" data-tab="performance">
-                        <i class="fa-solid fa-chart-line"></i>
-                        <span>الأداء العام</span>
-                    </button>
-                    <button class="ana-tab-btn" data-tab="remedial">
-                        <i class="fa-solid fa-stethoscope"></i>
-                        <span>خطة التدخل</span>
-                    </button>
-                    <button class="ana-tab-btn" data-tab="students">
-                        <i class="fa-solid fa-award"></i>
-                        <span>التلاميذ</span>
-                    </button>
-                </nav>
+                <h2 class="text-base font-bold text-gray-800 border-b-2 border-emerald-500 pb-2 inline-block">1. تشخيص الحالة</h2>
 
-                <div class="ana-sidebar-footer">
-                    <button id="print-report-btn" class="ana-action-btn primary">
-                        <i class="fa-solid fa-print"></i>
-                        <span>طباعة التقرير</span>
-                    </button>
-                    <button id="close-analysis-btn" class="ana-action-btn secondary">
-                        <i class="fa-solid fa-arrow-right-from-bracket"></i>
-                        <span>العودة للمحرر</span>
-                    </button>
+                <!-- اختيار الرتبة -->
+                <div class="bg-white p-4 rounded-2xl shadow-sm border border-gray-100">
+                    <label class="block text-sm font-bold text-gray-700 mb-2">ما هي رتبتك الأصلية الحالية؟</label>
+                    <select id="currentRank" class="w-full border-2 border-gray-200 rounded-xl p-3 text-gray-700 text-sm focus:ring-2 focus:ring-emerald-500 outline-none bg-gray-50" onchange="handleRankSelection()">
+                        <option value="">-- اضغط للبحث في قائمة الرتب --</option>
+                        <optgroup label="أسلاك التعليم الابتدائي">
+                            <option value="r1">أستاذ التعليم الابتدائي قسم أول</option>
+                            <option value="r15">نظار المدارس الابتدائية / أساتذة ت.إ قسم 2</option>
+                            <option value="r18">الأساتذة المميزون في التعليم الابتدائي</option>
+                            <option value="r19">مديرو المدارس الابتدائية</option>
+                        </optgroup>
+                        <optgroup label="أسلاك التعليم المتوسط">
+                            <option value="r2">أستاذ التعليم المتوسط قسم أول</option>
+                            <option value="r16">النظار في الت.المتوسط / أساتذة قسم 2</option>
+                            <option value="r21">الأساتذة المميزون في التعليم المتوسط</option>
+                            <option value="r22">مديرو المتوسطات</option>
+                        </optgroup>
+                        <optgroup label="أسلاك التعليم الثانوي">
+                            <option value="r3">أستاذ التعليم الثانوي قسم أول</option>
+                            <option value="r17">النظار / أساتذة التعليم الثانوي قسم 2</option>
+                            <option value="r25">الأساتذة المميزون في التعليم الثانوي</option>
+                            <option value="r26">مديرو الثانويات</option>
+                        </optgroup>
+                        <optgroup label="أسلاك التربية (المشرفون)">
+                            <option value="r4">مشرفو التربية</option>
+                            <option value="r5">المشرفون الرئيسيون للتربية</option>
+                            <option value="r6">المشرفون الرؤساء للتربية</option>
+                        </optgroup>
+                        <optgroup label="أسلاك التوجيه والمخابر والاقتصاد">
+                            <option value="r7">مستشار محلل للتوجيه المدرسي</option>
+                            <option value="r9">ملحق رئيسي بالمخابر</option>
+                            <option value="r14">مقتصد</option>
+                            <option value="r32">مساعد رئيسي للمصالح الاقتصادية</option>
+                            <!-- اختصار للقائمة لتناسب التطبيق، يمكنك إضافة الباقي -->
+                        </optgroup>
+                    </select>
                 </div>
-            </aside>
 
-            <!-- Main Content Area -->
-            <main class="ana-main-content">
-                <!-- Top Header -->
-                <header class="ana-content-header no-print">
-                    <div class="ana-header-info">
-                        <h2 id="analysis-class-name">اسم القسم</h2>
-                        <p id="analysis-subject-name">المادة الحالية</p>
+                <!-- حاسبة الأقدمية الذكية -->
+                <div id="seniorityContainer" class="hidden bg-blue-50 p-4 rounded-2xl border border-blue-200 shadow-sm fade-in">
+                    <div class="flex items-center gap-2 mb-2">
+                        <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                        <h3 class="text-sm font-bold text-gray-800">تاريخ أول تعيين (بصفة متربص/إدماج)</h3>
                     </div>
-                    <div class="ana-header-actions">
-                        <div class="ana-select-wrapper">
-                            <i class="fa-solid fa-filter"></i>
-                            <select id="analysis-select"></select>
-                        </div>
-                        <div class="ana-update-chip">
-                            <span class="pulse-dot"></span>
-                            تحديث تلقائي مفعل
-                        </div>
-                    </div>
-                </header>
-
-                <!-- Dynamic Tab Content -->
-                <div class="ana-tab-viewport scrollbar-premium">
+                    <p class="text-[10px] text-gray-600 mb-2">الأقدمية تحسب آلياً إلى غاية 11 جويلية 2026</p>
+                    <input type="date" id="appointmentDate" class="w-full border-2 border-white rounded-xl p-3 text-gray-700 bg-white focus:ring-2 focus:ring-blue-400 outline-none shadow-sm mb-2" onchange="calculateSeniority()">
                     
-                    <!-- Tab: Overview -->
-                    <section id="ana-tab-overview" class="ana-tab-content active">
-                        <div class="ana-stats-grid">
-                            <div class="ana-mini-card" data-variant="gold">
-                                <div class="ana-card-head">
-                                    <span class="label">نسبة النجاح</span>
-                                    <i class="fa-solid fa-percent"></i>
-                                </div>
-                                <div class="ana-card-body">
-                                    <h3 id="ana-pass-rate">0%</h3>
-                                    <div class="ana-progress"><div id="ana-pass-bar" style="width: 0%"></div></div>
-                                </div>
-                            </div>
-                            <div class="ana-mini-card" data-variant="blue">
-                                <div class="ana-card-head">
-                                    <span class="label">المعدل العام</span>
-                                    <i class="fa-solid fa-calculator"></i>
-                                </div>
-                                <div class="ana-card-body">
-                                    <h3 id="ana-class-avg">0.00</h3>
-                                    <p class="hint">متوسط علامات القسم</p>
-                                </div>
-                            </div>
-                            <div class="ana-mini-card" data-variant="green">
-                                <div class="ana-card-head">
-                                    <span class="label">أعلى علامة</span>
-                                    <i class="fa-solid fa-crown"></i>
-                                </div>
-                                <div class="ana-card-body">
-                                    <h3 id="ana-highest">0.00</h3>
-                                    <p id="ana-highest-name" class="name">--</p>
-                                </div>
-                            </div>
-                            <div class="ana-mini-card" data-variant="red">
-                                <div class="ana-card-head">
-                                    <span class="label">أدنى علامة</span>
-                                    <i class="fa-solid fa-triangle-exclamation"></i>
-                                </div>
-                                <div class="ana-card-body">
-                                    <h3 id="ana-lowest">0.00</h3>
-                                    <p id="ana-lowest-name" class="name">--</p>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="ana-split-grid">
-                            <!-- AI Insights Card -->
-                            <div class="ana-glass-panel ai-insights">
-                                <div class="panel-head">
-                                    <h3><i class="fa-solid fa-brain"></i> التحليل البيداغوجي الذكي</h3>
-                                    <button class="ana-icon-btn" title="تحديث التحليل"><i class="fa-solid fa-arrows-rotate"></i></button>
-                                </div>
-                                <div id="ana-report-text" class="panel-body ai-text-content"></div>
-                            </div>
-
-                            <!-- Distribution Chart -->
-                            <div class="ana-glass-panel distribution-chart">
-                                <div class="panel-head">
-                                    <h3><i class="fa-solid fa-chart-pie"></i> توزيع المستويات</h3>
-                                </div>
-                                <div class="panel-body chart-container">
-                                    <canvas id="analysis-chart"></canvas>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Global Summary (Conditional) -->
-                        <div id="global-summary-container" class="hidden ana-glass-panel">
-                            <div class="panel-head">
-                                <h3><i class="fa-solid fa-layer-group"></i> مقارنة شاملة للأقسام</h3>
-                            </div>
-                            <div class="panel-body p-0">
-                                <table class="ana-modern-table">
-                                    <thead>
-                                        <tr>
-                                            <th>القسم</th>
-                                            <th>تعداد التلاميذ</th>
-                                            <th>المعدل</th>
-                                            <th>نسبة النجاح</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="global-summary-body"></tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </section>
-
-                    <!-- Tab: Performance (To be filled by JS) -->
-                    <section id="ana-tab-performance" class="ana-tab-content">
-                        <div class="ana-placeholder">
-                            <i class="fa-solid fa-chart-area"></i>
-                            <p>تحليل الأداء التفصيلي قيد التطوير...</p>
-                        </div>
-                    </section>
-
-                    <!-- Tab: Remedial (To be filled by JS) -->
-                    <section id="ana-tab-remedial" class="ana-tab-content">
-                        <div class="ana-remedial-header">
-                            <h3><i class="fa-solid fa-hand-holding-medical"></i> الحالات التي تحتاج تدخل علاجي</h3>
-                            <p>تلاميذ حصلوا على معدل أقل من 10/20</p>
-                        </div>
-                        <div id="ana-remedial-list" class="ana-remedial-grid"></div>
-                    </section>
-
-                    <!-- Tab: Students -->
-                    <section id="ana-tab-students" class="ana-tab-content">
-                        <div class="ana-students-header">
-                            <h3><i class="fa-solid fa-medal"></i> لوحة الشرف</h3>
-                            <p>ترتيب التلاميذ حسب المعدل</p>
-                        </div>
-                        <div id="ana-top-students" class="ana-honor-grid"></div>
-                    </section>
-
+                    <div id="calcResultContainer" class="hidden mt-2 p-3 rounded-lg border text-xs font-medium"></div>
                 </div>
-            </main>
-        </div>
+
+                <!-- الحساب الرقمي -->
+                <div class="bg-white p-4 rounded-2xl shadow-sm border border-gray-100">
+                    <label class="block text-sm font-bold text-gray-700 mb-3">هل تملك حساباً في فضاء الموظف؟</label>
+                    <div class="flex flex-col gap-2">
+                        <label id="label-account-yes" class="flex items-center gap-3 p-3 border-2 border-gray-100 rounded-xl cursor-pointer transition-colors bg-white">
+                            <input type="radio" name="account" value="yes" class="w-5 h-5 text-emerald-600 focus:ring-emerald-500" onchange="handleAccountChange('yes')"/>
+                            <span class="text-sm font-bold text-gray-700">نعم، لدي حساب</span>
+                        </label>
+                        <label id="label-account-no" class="flex items-center gap-3 p-3 border-2 border-gray-100 rounded-xl cursor-pointer transition-colors bg-white">
+                            <input type="radio" name="account" value="no" class="w-5 h-5 text-emerald-600 focus:ring-emerald-500" onchange="handleAccountChange('no')"/>
+                            <span class="text-sm font-bold text-gray-700">لا أملك (إنشاء جديد)</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- زر عرض النتيجة -->
+                <button onclick="switchTab('tab-result')" class="w-full bg-gray-900 text-white font-bold py-4 rounded-xl shadow-lg mt-4 active:scale-95 transition-transform flex items-center justify-center gap-2">
+                    عرض نتيجتي والتوجيهات
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                </button>
             </div>
-        </div>
-                        </div>
+
+            <!-- الشاشة 2: نتيجتي (التشخيص) -->
+            <div id="tab-result" class="tab-content px-4 space-y-4 hidden fade-in">
+                <h2 class="text-base font-bold text-gray-800 border-b-2 border-emerald-500 pb-2 inline-block">2. النتيجة الإدارية</h2>
+
+                <!-- الأهلية -->
+                <div id="result-eligibility" class="bg-white p-4 rounded-2xl shadow-sm border text-center py-6">
+                    <svg class="w-12 h-12 text-gray-300 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    <p class="text-sm text-gray-500 font-medium">الرجاء إدخال بياناتك في الشاشة الرئيسية أولاً.</p>
+                </div>
+
+                <!-- تفاصيل الرتبة والرسوم -->
+                <div class="grid grid-cols-2 gap-3">
+                    <div class="bg-white p-3 rounded-2xl shadow-sm border border-gray-100 flex flex-col justify-center items-center text-center">
+                        <span class="text-[10px] text-gray-400 font-bold mb-1">الرتبة المستهدفة</span>
+                        <strong id="targetRankDisplay" class="text-xs text-emerald-800 leading-tight">--</strong>
+                    </div>
+                    <div class="bg-amber-50 p-3 rounded-2xl shadow-sm border border-amber-200 flex flex-col justify-center items-center text-center">
+                        <span class="text-[10px] text-amber-700 font-bold mb-1">حقوق المشاركة</span>
+                        <strong id="feesDisplay" class="text-lg text-amber-900 leading-tight">-- دج</strong>
+                        <span class="text-[9px] text-amber-600 mt-1">(بالبطاقة الذهبية)</span>
+                    </div>
+                </div>
+
+                <!-- التوجيه الرقمي -->
+                <div class="bg-white p-4 rounded-2xl shadow-sm border border-gray-100">
+                    <h3 class="flex items-center gap-2 text-sm font-bold text-gray-800 mb-2 border-b pb-2">
+                        <svg class="w-5 h-5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+                        خطوات التسجيل <span class="text-[10px] bg-red-100 text-red-600 px-1 rounded">قبل 31 ماي</span>
+                    </h3>
+                    <div id="result-account-steps" class="text-xs text-gray-600 leading-relaxed">
+                        يرجى تحديد حالة حسابك لمعرفة الخطوات.
                     </div>
                 </div>
             </div>
+
+            <!-- الشاشة 3: القوانين والتفاصيل (التفصيل الممل) -->
+            <div id="tab-rules" class="tab-content px-4 space-y-4 hidden fade-in">
+                <h2 class="text-base font-bold text-gray-800 border-b-2 border-emerald-500 pb-2 inline-block">3. المرجعية القانونية والتفاصيل</h2>
+
+                <div class="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 space-y-4 text-xs text-gray-700 leading-relaxed">
+                    
+                    <div>
+                        <strong class="text-emerald-700 text-sm block mb-1">■ احتساب الأقدمية (تطبيق المادة 63)</strong>
+                        <p>تُحسب الأقدمية إلى غاية تاريخ الامتحان المقررة في <strong class="text-red-600">11 جويلية 2026</strong>. يُسمح بالجمع المستمر بين الأقدمية المكتسبة في الرتبة الأصلية (من تاريخ التعيين كـ متربص/إدماج إلى 31 ديسمبر 2024) والأقدمية في رتبة الإدماج الجديدة (من 01 جانفي 2025).</p>
+                    </div>
+
+                    <div class="border-t pt-3">
+                        <strong class="text-emerald-700 text-sm block mb-1">■ المناصب المالية (الاستحقاق)</strong>
+                        <p>الترقية تتم في حدود <strong>المناصب الشاغرة نهائياً</strong> في ميزانية 2026. <br><span class="bg-amber-100 text-amber-800 p-1 rounded mt-1 block"><strong>استثناء:</strong> الرتب الآيلة للزوال (مثل مساعد تربوي، معلم...) يتم ترقية الناجحين فيها تلقائياً بمجرد حصولهم على معدل 10/20 بتحويل مناصبهم، بغض النظر عن عدد المناصب.</span></p>
+                    </div>
+
+                    <div class="border-t pt-3">
+                        <strong class="text-emerald-700 text-sm block mb-1">■ ملف المشاركة</strong>
+                        <ul class="list-disc list-inside space-y-1">
+                            <li>استمارة التسجيل من الأرضية الرقمية.</li>
+                            <li>وصل الدفع الإلكتروني (epay.education.gov.dz).</li>
+                            <li>قرار التسمية في الرتبة الحالية.</li>
+                            <li>شهادة عمل حديثة تُثبت الأقدمية.</li>
+                        </ul>
+                    </div>
+
+                    <div class="border-t pt-3">
+                        <strong class="text-emerald-700 text-sm block mb-1">■ تفاصيل حقوق المشاركة</strong>
+                        <table class="w-full text-center info-table mt-2">
+                            <tr><th>الصنف</th><th>المبلغ</th></tr>
+                            <tr><td>13 فما أقل</td><td>200 دج</td></tr>
+                            <tr><td>14 إلى 16</td><td>300 دج</td></tr>
+                            <tr><td>17 فما فوق</td><td>400 دج</td></tr>
+                        </table>
+                    </div>
+
+                    <!-- رابط المنشور الرسمي -->
+                    <div class="border-t pt-3 pb-6">
+                        <strong class="text-emerald-700 text-sm block mb-2">■ المصدر الرسمي</strong>
+                        <a href="https://www.education.gov.dz/2026/05/09/%d8%a8%d9%8a%d9%80%d9%80%d8%a7%d9%86-%d8%aa%d9%88%d8%b6%d9%8a%d8%ad%d9%8a-%d8%a8%d8%ae%d8%b5%d9%88%d8%b5-%d8%a7%d9%84%d8%b4%d8%b1%d9%88%d8%b7-%d9%88%d8%a7%d9%84%d8%a5%d8%ac%d8%b1%d8%a7%d8%a1%d8%a7/" target="_blank" class="flex items-center justify-center gap-2 bg-emerald-100 text-emerald-800 p-3 rounded-xl font-bold text-xs hover:bg-emerald-200 transition-colors shadow-sm active:scale-95">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path></svg>
+                            الاطلاع على المنشور الوزاري الرسمي
+                        </a>
+                    </div>
+
+                </div>
+            </div>
+
         </main>
 
-        <!-- Print Area (Exactly as in analyse.html) -->
-        <div id="printArea" class="hidden flex-col w-full bg-white text-black font-cairo">
-            <div class="text-center mb-6 border-b-2 border-md-primary pb-3 shrink-0 flex justify-between items-center px-4">
-                <div class="w-24 text-right"><i class="fa-solid fa-graduation-cap text-gray-300 text-5xl"></i></div>
-                <div class="flex-grow">
-                    <h2 class="font-bold text-xl mb-1">الجمهورية الجزائرية الديمقراطية الشعبية</h2>
-                    <h3 class="font-semibold text-lg mb-2 text-gray-700">وزارة التربية الوطنية</h3>
-                    <h1 class="text-2xl font-black text-md-primary bg-md-primary/10 inline-block px-6 py-2 rounded-full" id="printMainTitle">التقرير التحليلي والبيداغوجي لنتائج الفصل</h1>
-                </div>
-                <div class="w-24 text-left">
-                    <p class="text-xs font-bold text-gray-500 text-left">السنة الدراسية<br><span class="text-sm text-gray-800">2025/2026</span></p>
-                </div>
-            </div>
-            <div class="flex justify-between bg-teal-50 rounded-xl border border-teal-200 shrink-0 overflow-hidden mb-6 divide-x divide-x-reverse divide-teal-200">
-                <div class="text-center p-3 flex-1"><p class="text-xs text-teal-700 font-bold mb-1">القسم</p><p class="font-black text-lg text-teal-950 truncate" id="p-class">-</p></div>
-                <div class="text-center p-3 flex-1"><p class="text-xs text-teal-700 font-bold mb-1">المادة</p><p class="font-black text-lg text-teal-950 truncate" id="p-subject">-</p></div>
-                <div class="text-center p-3 flex-1 bg-teal-600 text-white"><p class="text-xs text-teal-100 font-bold mb-1">تعداد التلاميذ</p><p class="font-black text-2xl" id="p-count">-</p></div>
-            </div>
-            <div class="grid grid-cols-4 gap-4 mb-6 shrink-0">
-                <div class="border-l-4 border-l-blue-500 rounded-lg p-3 bg-gray-50 border border-gray-100 flex items-center justify-between"><div><p class="text-xs font-bold text-gray-500">نسبة النجاح</p><p class="text-2xl font-black text-blue-700 mt-1" id="p-rate">0%</p></div><i class="fa-solid fa-percent text-blue-200 text-3xl"></i></div>
-                <div class="border-l-4 border-l-purple-500 rounded-lg p-3 bg-gray-50 border border-gray-100 flex items-center justify-between"><div><p class="text-xs font-bold text-gray-500">المعدل العام</p><p class="text-2xl font-black text-purple-700 mt-1" id="p-avg">0.00</p></div><i class="fa-solid fa-chart-pie text-purple-200 text-3xl"></i></div>
-                <div class="border-l-4 border-l-green-500 rounded-lg p-3 bg-gray-50 border border-gray-100 flex items-center justify-between"><div><p class="text-xs font-bold text-gray-500">أعلى علامة</p><p class="text-2xl font-black text-green-700 mt-1" id="p-high">0.00</p></div><i class="fa-solid fa-arrow-trend-up text-green-200 text-3xl"></i></div>
-                <div class="border-l-4 border-l-red-500 rounded-lg p-3 bg-gray-50 border border-gray-100 flex items-center justify-between"><div><p class="text-xs font-bold text-gray-500">أدنى علامة</p><p class="text-2xl font-black text-red-700 mt-1" id="p-low">0.00</p></div><i class="fa-solid fa-arrow-trend-down text-red-200 text-3xl"></i></div>
-            </div>
-            <div class="grid grid-cols-5 gap-4 mb-4 shrink-0">
-                <div class="col-span-3 rounded-xl flex flex-col p-4 bg-gray-50 border border-gray-200"><h3 class="font-black text-base border-b-2 border-md-primary pb-2 mb-3 text-md-primary flex items-center gap-2"><i class="fa-solid fa-pen-nib"></i> قراءة تحليلية للنتائج</h3><p id="p-ai" class="text-[14px] leading-relaxed text-gray-800 text-justify font-bold mt-1"></p></div>
-                <div class="col-span-2 flex flex-col gap-2">
-                    <div class="border border-gold/40 rounded-lg p-2 bg-[#fffbf0] flex flex-col"><h3 class="font-black text-sm border-b border-gold/30 pb-1 mb-1.5 text-[#b8860b] flex items-center justify-center gap-1"><i class="fa-solid fa-medal"></i>التلاميذ الأوائل </h3><div id="p-top" class="flex flex-col justify-center gap-1"></div></div>
-                    <div class="border border-red-200 rounded-lg p-2 bg-red-50/50 flex flex-col" id="p-bottom-container" style="display: none;"><h3 class="font-black text-sm border-b border-red-200 pb-1 mb-1.5 text-red-700 flex items-center justify-center gap-1"><i class="fa-solid fa-triangle-exclamation"></i>التلاميذ المتأخرون </h3><div id="p-bottom" class="flex flex-col justify-center gap-1"></div></div>
-                </div>
-            </div>
-            <div class="border border-gray-200 rounded-xl p-4 mb-6 flex-grow flex flex-col items-center justify-center">
-                 <h3 class="font-bold text-sm mb-4 text-center text-gray-800 bg-gray-50 py-2 px-6 rounded border border-gray-200">المنحنى البياني لمستويات التحصيل</h3>
-                 <img id="p-chart-img" style="max-height: 220px; width: auto; object-fit: contain;" />
-            </div>
-        </div>
+        <!-- شريط التنقل السفلي (Tab Bar) -->
+        <nav class="bg-white border-t border-gray-200 flex justify-around p-2 pb-safe absolute bottom-0 w-full z-50">
+            <!-- زر الرئيسية -->
+            <button onclick="switchTab('tab-home', this)" class="nav-btn text-emerald-600 flex flex-col items-center justify-center w-20 py-1 transition-colors">
+                <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+                <span class="text-[10px] font-bold">الرئيسية</span>
+            </button>
+            
+            <!-- زر النتيجة -->
+            <button onclick="switchTab('tab-result', this)" class="nav-btn text-gray-400 hover:text-gray-800 flex flex-col items-center justify-center w-20 py-1 transition-colors">
+                <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path></svg>
+                <span class="text-[10px] font-bold">نتيجتي</span>
+            </button>
 
-        <footer class="status-bar admin-statusbar">
-            <div id="status-text">جاهز</div>
-            <div id="stats-text"></div>
-        </footer>
-        <div id="a11y-live" class="sr-only" aria-live="polite"></div>
+            <!-- زر القوانين -->
+            <button onclick="switchTab('tab-rules', this)" class="nav-btn text-gray-400 hover:text-gray-800 flex flex-col items-center justify-center w-20 py-1 transition-colors">
+                <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+                <span class="text-[10px] font-bold">القوانين</span>
+            </button>
+        </nav>
 
-        <div id="loader" class="loader-overlay hidden">
-            <div class="loader"></div>
-            <p>جاري المعالجة...</p>
-        </div>
-
-        <div id="toast" class="toast hidden">
-            <div class="toast-content">
-                <span id="toast-message"></span>
-            </div>
-        </div>
-
-        <div id="remedial-modal" class="loader-overlay hidden">
-            <div class="modal-content remedial-modal">
-                <div class="modal-header">
-                    <h2>تقرير التدخل العلاجي</h2>
-                    <button id="close-remedial" class="close-btn">&times;</button>
-                </div>
-                <div id="remedial-content" class="remedial-content"></div>
-            </div>
-        </div>
-
-        <!-- Settings Modal -->
-        <div id="settings-modal" class="loader-overlay hidden">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h2>قواعد التقديرات</h2>
-                    <button id="close-settings" class="close-btn">&times;</button>
-                </div>
-                <p class="modal-hint">قم بتحديد قواعد التقديرات التلقائية والتي سيتم حفظها في ملف Marks.txt.</p>
-                <div class="rules-table">
-                    <div class="rules-head">
-                        <span>من</span>
-                        <span>إلى</span>
-                        <span>التقدير</span>
-                        <span></span>
-                    </div>
-                    <div id="rules-container">
-                        <!-- Rules injected by JS -->
-                    </div>
-                </div>
-                <div class="modal-actions">
-                    <button id="add-rule-btn" class="btn btn-secondary">إضافة قاعدة +</button>
-                    <button id="save-rules-btn" class="btn btn-primary">حفظ وتطبيق</button>
-                </div>
-            </div>
-        </div>
+        <!-- دعم Safe Area للآيفون -->
+        <style> .pb-safe { padding-bottom: env(safe-area-inset-bottom); } </style>
     </div>
 
-    <script src="statsEngine.js"></script>
-    <script src="printManager.js"></script>
-    <script src="renderer.js"></script>
+    <script>
+        // Data Base
+        const ranksData = {
+            "r1": { target: "ناظر في التعليم الابتدائي", years: 5, fee: "200" },
+            "r15": { target: "مدير مدرسة ابتدائية", years: 5, fee: "300" },
+            "r18": { target: "مفتش ت.ابتدائي تخصص المواد", years: 6, fee: "400" },
+            "r19": { target: "مفتش ت.ابتدائي إدارة", years: 6, fee: "400" },
+            "r2": { target: "ناظر في التعليم المتوسط", years: 5, fee: "300" },
+            "r16": { target: "مدير متوسطة", years: 5, fee: "300" },
+            "r21": { target: "مفتش ت.متوسط تخصص المواد", years: 5, fee: "400" },
+            "r22": { target: "مفتش ت.متوسط إدارة", years: 5, fee: "400" },
+            "r3": { target: "ناظر في التعليم الثانوي", years: 5, fee: "300" },
+            "r17": { target: "مدير ثانوية", years: 5, fee: "400" },
+            "r25": { target: "مفتش ت.ثانوي تخصص المواد", years: 5, fee: "400" },
+            "r26": { target: "مفتش ت.ثانوي إدارة", years: 5, fee: "400" },
+            "r4": { target: "مشرف رئيسي للتربية", years: 5, fee: "200" },
+            "r5": { target: "مشرف رئيس للتربية", years: 5, fee: "300" },
+            "r6": { target: "مشرف عام للتربية", years: 5, fee: "300" },
+            "r7": { target: "مستشار رئيسي للتوجيه", years: 5, fee: "300" },
+            "r9": { target: "ملحق رئيس بالمخابر", years: 5, fee: "300" },
+            "r14": { target: "مقتصد رئيسي", years: 5, fee: "300" },
+            "r32": { target: "مساعد رئيسي للمصالح الاقتصادية", years: 5, fee: "200" }
+        };
+
+        let currentRankData = null;
+        let hasSeniority = '';
+        let hasAccount = '';
+
+        // Tab Switching Logic
+        window.switchTab = function(tabId, btnElement = null) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('.nav-btn').forEach(el => {
+                el.classList.remove('text-emerald-600');
+                el.classList.add('text-gray-400');
+            });
+            
+            document.getElementById(tabId).classList.remove('hidden');
+            
+            if (btnElement) {
+                btnElement.classList.remove('text-gray-400');
+                btnElement.classList.add('text-emerald-600');
+            } else {
+                // If called via button not in nav, highlight appropriate nav
+                const index = tabId === 'tab-home' ? 0 : tabId === 'tab-result' ? 1 : 2;
+                const btns = document.querySelectorAll('.nav-btn');
+                btns[index].classList.remove('text-gray-400');
+                btns[index].classList.add('text-emerald-600');
+            }
+        };
+
+        // UI Updates for Radio Buttons
+        function updateRadioStyles(groupName, selectedValue) {
+            const yesLabel = document.getElementById(`label-${groupName}-yes`);
+            const noLabel = document.getElementById(`label-${groupName}-no`);
+            const activeClasses = ['border-emerald-500', 'bg-emerald-50'];
+            const inactiveClasses = ['border-gray-100', 'bg-white'];
+
+            yesLabel.classList.remove(...activeClasses); yesLabel.classList.add(...inactiveClasses);
+            noLabel.classList.remove(...activeClasses); noLabel.classList.add(...inactiveClasses);
+
+            if (selectedValue === 'yes') { yesLabel.classList.remove(...inactiveClasses); yesLabel.classList.add(...activeClasses); } 
+            else if (selectedValue === 'no') { noLabel.classList.remove(...inactiveClasses); noLabel.classList.add(...activeClasses); }
+        }
+
+        // Rank Selection
+        window.handleRankSelection = function() {
+            const rankKey = document.getElementById('currentRank').value;
+            const container = document.getElementById('seniorityContainer');
+            
+            document.getElementById('appointmentDate').value = '';
+            document.getElementById('calcResultContainer').classList.add('hidden');
+            hasSeniority = '';
+
+            if (rankKey && ranksData[rankKey]) {
+                currentRankData = ranksData[rankKey];
+                container.classList.remove('hidden');
+                document.getElementById('targetRankDisplay').textContent = currentRankData.target;
+                document.getElementById('feesDisplay').textContent = currentRankData.fee;
+            } else {
+                currentRankData = null;
+                container.classList.add('hidden');
+                document.getElementById('targetRankDisplay').textContent = '--';
+                document.getElementById('feesDisplay').textContent = '--';
+            }
+            renderResult();
+        };
+
+        // Seniority Calculator
+        window.calculateSeniority = function() {
+            const dateInput = document.getElementById('appointmentDate').value;
+            if (!dateInput || !currentRankData) return;
+
+            const appDate = new Date(dateInput);
+            const examDate = new Date('2026-07-11');
+            const resultBox = document.getElementById('calcResultContainer');
+
+            if (appDate > examDate) {
+                resultBox.className = 'mt-2 p-3 rounded-lg border border-red-300 bg-red-50 text-red-800 text-xs font-bold block fade-in';
+                resultBox.textContent = 'تاريخ التعيين خاطئ (بعد الامتحان).';
+                hasSeniority = '';
+                renderResult();
+                return;
+            }
+
+            let years = examDate.getFullYear() - appDate.getFullYear();
+            let months = examDate.getMonth() - appDate.getMonth();
+            let days = examDate.getDate() - appDate.getDate();
+
+            if (days < 0) { months--; days += 30; }
+            if (months < 0) { years--; months += 12; }
+
+            const req = currentRankData.years;
+
+            if (years >= req) {
+                hasSeniority = 'yes';
+                resultBox.className = 'mt-2 p-3 rounded-lg border border-emerald-300 bg-emerald-50 text-emerald-800 text-xs block fade-in';
+                resultBox.innerHTML = `<strong>مقبول!</strong> أقدميتك (${years} سنة و ${months} شهر). المطلوب ${req} سنوات.`;
+            } else {
+                hasSeniority = 'no';
+                resultBox.className = 'mt-2 p-3 rounded-lg border border-red-300 bg-red-50 text-red-800 text-xs block fade-in';
+                resultBox.innerHTML = `<strong>مرفوض!</strong> أقدميتك (${years} سنة) غير كافية. تنقصك المدة لـ ${req} سنوات.`;
+            }
+            renderResult();
+        };
+
+        // Account Selection
+        window.handleAccountChange = function(value) {
+            hasAccount = value;
+            updateRadioStyles('account', value);
+            renderResult();
+        };
+
+        // Render Final Result Tab
+        function renderResult() {
+            const eligibility = document.getElementById('result-eligibility');
+            const steps = document.getElementById('result-account-steps');
+
+            // 1. Eligibility
+            eligibility.className = 'p-4 rounded-2xl shadow-sm border text-center py-6 fade-in';
+            if (!currentRankData) {
+                eligibility.classList.add('bg-white');
+                eligibility.innerHTML = `<svg class="w-10 h-10 text-gray-300 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg><p class="text-xs text-gray-500 font-bold">حدد رتبتك وتاريخ التعيين في الصفحة الرئيسية.</p>`;
+            } else if (hasSeniority === 'yes') {
+                eligibility.classList.add('bg-emerald-50', 'border-emerald-200');
+                eligibility.innerHTML = `<div class="w-12 h-12 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-2"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg></div><strong class="text-emerald-800 block mb-1">مؤهل للمشاركة</strong><p class="text-[10px] text-emerald-600">تم استيفاء شرط الأقدمية القانونية بنجاح.</p>`;
+            } else if (hasSeniority === 'no') {
+                eligibility.classList.add('bg-red-50', 'border-red-200');
+                eligibility.innerHTML = `<div class="w-12 h-12 bg-red-100 text-red-600 rounded-full flex items-center justify-center mx-auto mb-2"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></div><strong class="text-red-800 block mb-1">غير مؤهل</strong><p class="text-[10px] text-red-600">الأقدمية الحالية لا تكفي لشرط الترقية المطلوب.</p>`;
+            }
+
+            // 2. Steps
+            if (hasAccount === 'yes') {
+                steps.innerHTML = `<strong class="text-emerald-600 block mb-1">ممتاز، حسابك جاهز.</strong>1. ادخل لمنصة <strong>mowadaf.education.dz</strong><br>2. اضغط على "الامتحانات المهنية"<br>3. قم بـ <strong>إيداع الطلب وتأكيده</strong> قبل 31 ماي.<br>4. ادفع الرسوم واستخرج الوصل والاستمارة.`;
+            } else if (hasAccount === 'no') {
+                steps.innerHTML = `<strong class="text-red-600 block mb-1">عاجل: يجب إنشاء حساب.</strong>1. ادخل لمنصة <strong>mowadaf.education.dz</strong> لإنشاء حساب.<br>2. اطبع استمارة طلب إنشاء حساب.<br>3. ادفعها لمدير المؤسسة <strong>لتفعيل الحساب</strong>.<br>4. بعد التفعيل، ادخل مجدداً وقم بـ <strong>إيداع الطلب</strong> قبل 31 ماي.`;
+            } else {
+                steps.innerHTML = 'يرجى تحديد حالة حسابك لمعرفة الخطوات.';
+            }
+        }
+    </script>
 </body>
-
 </html>
-
-
