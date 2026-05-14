@@ -10,7 +10,7 @@
         body { font-family: 'Tajawal', sans-serif; background-color: #f1f5f9; }
         .hidden { display: none !important; }
         
-        /* إخفاء شريط التمرير الافتراضي لشكل احترافي */
+        /* إخفاء شريط التمرير الافتراضي */
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
@@ -22,256 +22,222 @@
         .info-table td, .info-table th { padding: 0.75rem; border: 1px solid #e2e8f0; text-align: right; }
         .info-table th { background-color: #f8fafc; font-weight: 700; color: #334155; }
         
-        /* التجاوب النشط للتبويبات الجانبية (Desktop) */
-        .desktop-tab-active { background-color: #047857; color: white; border-right: 4px solid #10b981; }
-        .desktop-tab-inactive { background-color: transparent; color: #475569; border-right: 4px solid transparent; }
-        .desktop-tab-inactive:hover { background-color: #f1f5f9; color: #0f172a; }
-
-        /* تخصيص أزرار الاختيار الرسمية */
-        .radio-card-active { border-color: #059669; background-color: #ecfdf5; box-shadow: 0 0 0 1px #059669; }
+        /* التجاوب النشط للتبويبات (Desktop) */
+        .desktop-tab-active { background-color: #047857; color: white; }
+        .desktop-tab-inactive { background-color: white; color: #475569; hover:bg-emerald-50; }
     </style>
 </head>
-<body class="text-right text-slate-800">
+<body class="text-right">
 
-    <!-- شريط الإعلان العاجل (رسمي) -->
-    <div class="bg-red-700 text-white p-2.5 text-center text-xs sm:text-sm font-bold flex justify-center items-center gap-2 sticky top-0 z-50 shadow-md tracking-wide">
-        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
-        <span>هام جداً: آخر أجل للتسجيل الرقمي وإيداع الطلبات هو 31 ماي 2026</span>
+    <!-- شريط الإعلان العاجل (متجاوب) -->
+    <div class="bg-red-600 text-white p-2 text-center text-[11px] sm:text-sm font-bold flex justify-center items-center gap-2 sticky top-0 z-50 shadow-md">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="animate-pulse"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+        <span>عاجل: آخر أجل للتسجيل الرقمي وإيداع الطلب هو 31 ماي 2026</span>
     </div>
 
-    <!-- الحاوية الرئيسية (Layout لوحة التحكم) -->
-    <div class="max-w-6xl mx-auto min-h-screen flex flex-col md:flex-row md:py-8 md:px-4 gap-6">
+    <!-- الحاوية الرئيسية (متجاوبة: تأخذ مساحة أكبر على الحاسوب وتتركز في المنتصف) -->
+    <div class="max-w-5xl mx-auto min-h-screen flex flex-col md:py-6">
         
-        <!-- الشريط الجانبي (Sidebar - Desktop Only) -->
-        <aside class="hidden md:flex flex-col w-1/3 lg:w-1/4 bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden shrink-0 h-fit sticky top-24">
+        <!-- إطار التطبيق (Desktop & Mobile) -->
+        <div id="app-wrapper" class="flex-1 flex flex-col md:flex-row bg-white md:rounded-2xl shadow-2xl overflow-hidden relative">
             
-            <!-- ترويسة الشريط الجانبي -->
-            <div class="bg-slate-800 text-white p-6 border-b border-slate-700">
-                <div class="flex items-center gap-3 mb-4">
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e4/Seal_of_Algeria.svg/200px-Seal_of_Algeria.svg.png" alt="شعار الجزائر" class="w-10 h-10 opacity-90 drop-shadow-md">
-                    <div>
-                        <h1 class="text-lg font-bold leading-tight">وزارة التربية الوطنية</h1>
-                        <p class="text-xs text-slate-300 mt-1">الامتحانات المهنية 2026</p>
-                    </div>
-                </div>
-                <div class="bg-slate-700/50 p-3 rounded-lg border border-slate-600/50">
-                    <p class="text-[11px] text-slate-300 font-medium mb-1">تصميم وتطوير المنصة:</p>
-                    <p class="text-sm font-bold text-white">الأستاذ حكيم بوزورداز</p>
-                </div>
-            </div>
-
-            <!-- أزرار التنقل -->
-            <nav class="flex flex-col p-3 gap-1">
-                <button onclick="switchTab('tab-input')" id="btn-desktop-input" class="desktop-tab-active flex items-center gap-3 p-3 rounded-md font-bold transition-all text-sm">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-                    1. إدخال البيانات الوظيفية
-                </button>
-                <button onclick="switchTab('tab-result')" id="btn-desktop-result" class="desktop-tab-inactive flex items-center gap-3 p-3 rounded-md font-bold transition-all text-sm relative">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                    2. التقرير والتوجيه
-                    <span id="badge-desktop-result" class="hidden absolute left-3 top-1/2 -translate-y-1/2 w-2 h-2 bg-red-500 rounded-full"></span>
-                </button>
-                <button onclick="switchTab('tab-rules')" id="btn-desktop-rules" class="desktop-tab-inactive flex items-center gap-3 p-3 rounded-md font-bold transition-all text-sm">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477-4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
-                    المنشور الوزاري والقوانين
-                </button>
-            </nav>
-        </aside>
-
-        <!-- الهيدر للموبايل فقط -->
-        <header class="md:hidden bg-slate-800 text-white p-5 shadow-sm shrink-0">
-            <div class="flex items-center gap-3">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e4/Seal_of_Algeria.svg/200px-Seal_of_Algeria.svg.png" alt="شعار الجزائر" class="w-10 h-10 opacity-90">
-                <div>
-                    <h1 class="text-lg font-bold leading-tight">الامتحانات المهنية 2026</h1>
-                    <p class="text-xs text-emerald-400 mt-1">بوابة التحقق من الشروط</p>
-                </div>
-            </div>
-        </header>
-
-        <!-- منطقة المحتوى الرئيسية -->
-        <main class="flex-1 bg-white md:rounded-xl shadow-sm border-x border-b md:border border-slate-200 relative overflow-y-auto pb-20 md:pb-6" id="main-scroll-area">
-            
-            <!-- 1. شاشة إدخال البيانات -->
-            <div id="tab-input" class="fade-in">
-                <div class="bg-slate-50 p-5 md:p-8 border-b border-slate-200">
-                    <h2 class="text-xl md:text-2xl font-bold text-slate-800">البيانات الإدارية للموظف</h2>
-                    <p class="text-sm text-slate-500 mt-2">يرجى إدخال المعلومات بدقة كما هي مدونة في شهادة العمل لتحديد أهليتك للمشاركة.</p>
-                </div>
-
-                <div class="p-5 md:p-8 space-y-6">
-                    <!-- حاسبة الأقدمية -->
-                    <div class="border border-slate-200 rounded-lg p-5 bg-white">
-                        <label class="block text-slate-800 font-bold mb-4 text-sm md:text-base border-r-4 border-blue-600 pr-3">
-                            تاريخ أول تعيين (أو تاريخ الإدماج)
-                        </label>
-                        <input type="date" id="date-join" class="w-full md:w-1/2 border border-slate-300 rounded-md p-3 text-slate-800 font-bold focus:ring-1 focus:ring-blue-600 focus:border-blue-600 outline-none transition-all text-center block" onchange="calculateSeniority()">
-                        
-                        <div id="seniority-calc-result" class="hidden mt-4 p-4 rounded-md border text-sm font-bold bg-slate-50 border-slate-200 text-slate-700 leading-relaxed"></div>
-                        <p class="text-xs text-slate-500 mt-3 font-medium">سيتم حساب الأقدمية تلقائياً لغاية تاريخ إجراء الامتحان (11 جويلية 2026).</p>
-                    </div>
-
-                    <!-- الحساب في الأرضية -->
-                    <div class="border border-slate-200 rounded-lg p-5 bg-white">
-                        <label class="block text-slate-800 font-bold mb-4 text-sm md:text-base border-r-4 border-emerald-600 pr-3">
-                            حالة الحساب في النظام المعلوماتي (الأرضية الرقمية)
-                        </label>
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                            <label id="label-account-yes" class="flex items-start gap-3 p-4 border border-slate-200 rounded-md cursor-pointer transition-all hover:bg-slate-50 relative">
-                                <input type="radio" name="account" value="yes" class="mt-0.5 w-4 h-4 text-emerald-600 border-slate-300 focus:ring-emerald-500" onchange="handleAccountChange('yes')"/>
-                                <div>
-                                    <span class="font-bold text-slate-800 block text-sm">أملك حساب مفعل</span>
-                                    <span class="text-xs text-slate-500 mt-1 block">لدي بيانات دخول (اسم مستخدم وكلمة مرور).</span>
-                                </div>
-                            </label>
-                            <label id="label-account-no" class="flex items-start gap-3 p-4 border border-slate-200 rounded-md cursor-pointer transition-all hover:bg-slate-50 relative">
-                                <input type="radio" name="account" value="no" class="mt-0.5 w-4 h-4 text-emerald-600 border-slate-300 focus:ring-emerald-500" onchange="handleAccountChange('no')"/>
-                                <div>
-                                    <span class="font-bold text-slate-800 block text-sm">لا أملك حساب</span>
-                                    <span class="text-xs text-slate-500 mt-1 block">لم أقم بإنشاء حساب على المنصة بعد.</span>
-                                </div>
-                            </label>
+            <!-- الشريط الجانبي/العلوي (Navigation & Header) -->
+            <aside class="md:w-1/3 lg:w-1/4 bg-slate-50 border-l border-gray-200 flex flex-col z-20 shrink-0">
+                
+                <!-- الهيدر -->
+                <header class="bg-emerald-700 text-white p-5 shadow-sm relative overflow-hidden shrink-0">
+                    <div class="absolute top-0 right-0 w-32 h-32 bg-emerald-600 rounded-full mix-blend-multiply filter blur-xl opacity-50 -mr-10 -mt-10"></div>
+                    <div class="relative z-10 flex flex-row md:flex-col items-center md:items-start gap-4">
+                        <div class="bg-white p-2 rounded-xl text-emerald-700 shadow-md shrink-0">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
+                        </div>
+                        <div>
+                            <h1 class="text-xl md:text-2xl font-bold leading-tight drop-shadow-sm">توجيه الامتحانات</h1>
+                            <p class="text-sm text-emerald-100 font-medium mt-1">دورة 2026</p>
+                            <div class="mt-2 text-[11px] bg-emerald-800/50 inline-block px-2 py-1 rounded-md text-emerald-50 border border-emerald-600/50">
+                                تطوير: الأستاذ حكيم بوزورداز
+                            </div>
                         </div>
                     </div>
+                </header>
 
-                    <!-- الصنف المراد الترقية إليه -->
-                    <div class="border border-slate-200 rounded-lg p-5 bg-white">
-                        <label class="block text-slate-800 font-bold mb-4 text-sm md:text-base border-r-4 border-amber-500 pr-3">
-                            تصنيف الرتبة المُراد الترقية إليها
-                        </label>
-                        <select id="targetCategory" class="w-full border border-slate-300 rounded-md p-3 text-slate-700 font-bold focus:ring-1 focus:ring-amber-500 focus:border-amber-500 outline-none transition-all bg-white" onchange="handleCategoryChange()">
-                            <option value="">-- يرجى الاختيار من القائمة --</option>
-                            <option value="<=13">الصنف 13 فما أقل (مثال: أستاذ مدرسة ابتدائية، مساعد تربوي)</option>
-                            <option value="14-16">من الصنف 14 إلى 16 (مثال: أستاذ رئيسي، مدير متوسطة)</option>
-                            <option value=">=17">الصنف 17 فما فوق (مثال: مدير ثانوية، مفتش)</option>
-                        </select>
+                <!-- أزرار التنقل (Desktop Only) -->
+                <nav class="hidden md:flex flex-col p-4 gap-2 flex-1">
+                    <button onclick="switchTab('tab-input')" id="btn-desktop-input" class="desktop-tab-active flex items-center gap-3 p-3 rounded-lg font-bold transition-all text-sm shadow-sm border border-transparent">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+                        1. إدخال البيانات
+                    </button>
+                    <button onclick="switchTab('tab-result')" id="btn-desktop-result" class="desktop-tab-inactive flex items-center gap-3 p-3 rounded-lg font-bold transition-all text-sm border border-gray-200">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        2. النتيجة والتوجيه
+                        <span id="badge-desktop-result" class="hidden mr-auto bg-red-500 text-white text-[10px] px-2 py-0.5 rounded-full animate-bounce">جديد</span>
+                    </button>
+                    <button onclick="switchTab('tab-rules')" id="btn-desktop-rules" class="desktop-tab-inactive flex items-center gap-3 p-3 rounded-lg font-bold transition-all text-sm border border-gray-200">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+                        المقروئية والقوانين
+                    </button>
+                    
+                    <div class="mt-auto pt-6 pb-2 text-center">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e4/Seal_of_Algeria.svg/200px-Seal_of_Algeria.svg.png" alt="شعار الجزائر" class="w-12 mx-auto opacity-30 mb-2 grayscale hover:grayscale-0 transition-all">
                     </div>
+                </nav>
+            </aside>
 
-                    <div class="pt-4 border-t border-slate-100">
-                        <button onclick="goToResult()" class="w-full md:w-auto md:min-w-[250px] mr-auto bg-slate-800 hover:bg-slate-900 text-white font-bold py-3 px-6 rounded-md shadow-sm transition-colors flex justify-center items-center gap-2 text-sm md:text-base">
-                            إصدار التقرير والتوجيه
-                            <svg class="w-4 h-4 rtl:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+            <!-- منطقة المحتوى الرئيسية (Scrollable) -->
+            <main class="flex-1 bg-white relative overflow-y-auto pb-20 md:pb-0 scroll-smooth" id="main-scroll-area">
+                
+                <div class="p-4 md:p-8 max-w-3xl mx-auto w-full">
+                    
+                    <!-- 1. شاشة إدخال البيانات -->
+                    <div id="tab-input" class="fade-in space-y-5">
+                        <div class="mb-2">
+                            <h2 class="text-xl md:text-2xl font-bold text-gray-800">بيانات الموظف</h2>
+                            <p class="text-xs md:text-sm text-gray-500 mt-1">أدخل معلوماتك بدقة للحصول على التوجيه الصحيح.</p>
+                        </div>
+
+                        <!-- الحاسبة -->
+                        <div class="bg-white p-4 md:p-5 rounded-2xl shadow-sm border border-gray-100 relative overflow-hidden group hover:border-emerald-200 transition-colors">
+                            <div class="absolute top-0 right-0 w-1 h-full bg-blue-500"></div>
+                            <label class="block text-gray-800 font-bold mb-3 text-sm md:text-base flex items-center gap-2">
+                                <svg class="w-5 h-5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                                تاريخ أول تعيين (أو الإدماج)
+                            </label>
+                            <input type="date" id="date-join" class="w-full border border-gray-300 rounded-xl p-3 md:p-4 text-gray-800 font-bold focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all bg-gray-50 text-center" onchange="calculateSeniority()">
+                            
+                            <div id="seniority-calc-result" class="hidden mt-4 p-3 rounded-xl border text-sm font-bold text-center"></div>
+                        </div>
+
+                        <!-- الحساب -->
+                        <div class="bg-white p-4 md:p-5 rounded-2xl shadow-sm border border-gray-100 relative overflow-hidden group hover:border-emerald-200 transition-colors">
+                            <div class="absolute top-0 right-0 w-1 h-full bg-emerald-500"></div>
+                            <label class="block text-gray-800 font-bold mb-3 text-sm md:text-base">هل تملك حساباً مفعلاً في النظام المعلوماتي؟</label>
+                            <div class="flex gap-3">
+                                <label id="label-account-yes" class="flex-1 flex flex-col items-center justify-center gap-2 p-3 border rounded-xl cursor-pointer transition-all bg-white hover:bg-emerald-50">
+                                    <input type="radio" name="account" value="yes" class="hidden" onchange="handleAccountChange('yes')"/>
+                                    <span class="text-xl md:text-2xl">✅</span>
+                                    <span class="font-bold text-gray-700 text-xs md:text-sm">نعم أملك</span>
+                                </label>
+                                <label id="label-account-no" class="flex-1 flex flex-col items-center justify-center gap-2 p-3 border rounded-xl cursor-pointer transition-all bg-white hover:bg-emerald-50">
+                                    <input type="radio" name="account" value="no" class="hidden" onchange="handleAccountChange('no')"/>
+                                    <span class="text-xl md:text-2xl">❌</span>
+                                    <span class="font-bold text-gray-700 text-xs md:text-sm">لا أملك</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- الصنف -->
+                        <div class="bg-white p-4 md:p-5 rounded-2xl shadow-sm border border-gray-100 relative overflow-hidden group hover:border-emerald-200 transition-colors">
+                            <div class="absolute top-0 right-0 w-1 h-full bg-amber-500"></div>
+                            <label class="block text-gray-800 font-bold mb-3 text-sm md:text-base">صنف الرتبة المراد الترقية إليها</label>
+                            <select id="targetCategory" class="w-full border border-gray-300 rounded-xl p-3 md:p-4 text-gray-700 font-bold focus:ring-2 focus:ring-amber-500 outline-none transition-all bg-gray-50" onchange="handleCategoryChange()">
+                                <option value="">-- اضغط للاختيار --</option>
+                                <option value="<=13">الصنف 13 فما أقل</option>
+                                <option value="14-16">من الصنف 14 إلى 16</option>
+                                <option value=">=17">الصنف 17 فما فوق</option>
+                            </select>
+                        </div>
+
+                        <button onclick="goToResult()" class="w-full bg-emerald-600 text-white font-bold py-4 rounded-xl shadow-lg shadow-emerald-200 mt-6 active:scale-95 transition-transform flex justify-center items-center gap-2 text-lg">
+                            عرض النتيجة والخطوات
+                            <svg class="w-5 h-5 rtl:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
                         </button>
                     </div>
-                </div>
-            </div>
 
-            <!-- 2. شاشة التقرير والنتيجة -->
-            <div id="tab-result" class="hidden fade-in">
-                <div class="bg-emerald-800 p-5 md:p-8 flex items-center justify-between">
-                    <div>
-                        <h2 class="text-xl md:text-2xl font-bold text-white">التقرير الإداري والتوجيه</h2>
-                        <p class="text-sm text-emerald-100 mt-1">بناءً على المعطيات المدخلة، إليك الإجراءات المطلوبة.</p>
-                    </div>
-                    <button onclick="switchTab('tab-input')" class="md:hidden bg-white/20 hover:bg-white/30 text-white px-3 py-1.5 rounded text-xs font-bold transition-colors">تعديل</button>
-                </div>
-
-                <div class="p-5 md:p-8 space-y-6">
-                    
-                    <!-- حالة الأقدمية -->
-                    <div id="result-eligibility" class="p-4 rounded-md border font-bold text-sm md:text-base border-slate-200 bg-slate-50 text-slate-500">
-                        يرجى إدخال تاريخ التعيين في الشاشة السابقة لحساب الأهلية.
-                    </div>
-
-                    <!-- إجراءات التسجيل -->
-                    <div class="border border-slate-200 rounded-lg overflow-hidden">
-                        <div class="bg-slate-50 px-4 py-3 border-b border-slate-200 flex items-center gap-2">
-                            <svg class="w-5 h-5 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
-                            <h3 class="font-bold text-slate-800">إجراءات التسجيل الرقمي</h3>
+                    <!-- 2. شاشة النتيجة والتوجيه -->
+                    <div id="tab-result" class="hidden fade-in space-y-4">
+                        <div class="flex items-center justify-between mb-4">
+                            <h2 class="text-xl md:text-2xl font-bold text-emerald-900">النتيجة والإجراءات</h2>
+                            <button onclick="switchTab('tab-input')" class="md:hidden text-emerald-600 bg-emerald-50 px-3 py-1 rounded-full text-xs font-bold border border-emerald-200">تعديل البيانات</button>
                         </div>
-                        <div class="p-4">
-                            <div id="result-account-steps" class="text-sm text-slate-600 leading-relaxed">
-                                يرجى تحديد حالة حسابك لمعرفة الخطوات.
+
+                        <div id="result-eligibility" class="p-4 rounded-xl shadow-sm border font-bold text-center text-sm md:text-base border-gray-200 bg-gray-50 text-gray-500">
+                            أدخل تاريخ التعيين أولاً لمعرفة أهليتك.
+                        </div>
+
+                        <!-- بطاقة التسجيل -->
+                        <div class="bg-white p-4 md:p-5 rounded-2xl shadow-sm border border-gray-100">
+                            <div class="flex items-center gap-2 mb-3">
+                                <div class="bg-blue-100 p-2 rounded-lg text-blue-600"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg></div>
+                                <h3 class="font-bold text-gray-800 text-sm md:text-base">التسجيل الرقمي</h3>
+                            </div>
+                            <div id="result-account-steps" class="text-xs md:text-sm text-gray-600">حدد حالة حسابك في الشاشة السابقة.</div>
+                        </div>
+
+                        <!-- بطاقة الدفع -->
+                        <div class="bg-white p-4 md:p-5 rounded-2xl shadow-sm border border-gray-100">
+                            <div class="flex items-center justify-between mb-2">
+                                <div class="flex items-center gap-2">
+                                    <div class="bg-amber-100 p-2 rounded-lg text-amber-600"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path></svg></div>
+                                    <h3 class="font-bold text-gray-800 text-sm md:text-base">حقوق المشاركة</h3>
+                                </div>
+                                <span id="result-fees" class="font-black text-lg md:text-xl text-emerald-700 bg-emerald-50 px-3 py-1 rounded-lg border border-emerald-100">-- دج</span>
+                            </div>
+                            <p class="text-[10px] md:text-xs text-gray-500 mt-2">الدفع إلزامي عبر البطاقة الذهبية في منصة (epay.education.gov.dz).</p>
+                        </div>
+                    </div>
+
+                    <!-- 3. شاشة القوانين (المنشور) -->
+                    <div id="tab-rules" class="hidden fade-in space-y-4">
+                        <h2 class="text-xl md:text-2xl font-bold text-gray-800 mb-4 border-b pb-2">ملخص المنشور الوزاري</h2>
+                        
+                        <div class="bg-white p-4 rounded-xl border shadow-sm text-xs md:text-sm leading-loose text-gray-700">
+                            <ul class="list-disc list-inside space-y-3">
+                                <li><strong class="text-emerald-700">تاريخ الامتحان:</strong> 11 جويلية 2026.</li>
+                                <li><strong class="text-red-600">آخر أجل للتسجيل:</strong> إيداع الطلبات ينتهي يوم <strong class="underline font-bold">31 ماي 2026</strong>.</li>
+                                <li><strong class="text-blue-700">الأقدمية المطلوبة:</strong> تُحسب لغاية تاريخ إجراء الامتحان (11 جويلية)، ويتم الجمع بين رتبة الإدماج والرتبة الأصلية حسب المرسوم 54/25 والمادة 63. تتراوح بين 5، 7، و 12 سنة حسب الرتبة.</li>
+                                <li><strong class="text-gray-800">التسجيل:</strong> حصري عبر منصة <a href="https://mowadaf.education.dz" class="text-blue-500 underline" target="_blank">mowadaf.education.dz</a>.</li>
+                            </ul>
+
+                            <table class="w-full mt-4 info-table text-[10px] md:text-xs">
+                                <tr><th>الصنف</th><th>مبلغ الدفع</th></tr>
+                                <tr><td>13 فما أقل</td><td>200 دج</td></tr>
+                                <tr><td>14 إلى 16</td><td>300 دج</td></tr>
+                                <tr><td>17 فما فوق</td><td>400 دج</td></tr>
+                            </table>
+                        </div>
+
+                        <!-- رابط المنشور وتطوير -->
+                        <div class="pt-4 pb-6 flex flex-col md:flex-row gap-4 items-center justify-between border-t border-gray-200 mt-6">
+                            <a href="https://www.education.gov.dz/2026/05/09/%d8%a8%d9%8a%d9%80%d9%80%d8%a7%d9%86-%d8%aa%d9%88%d8%b6%d9%8a%d8%ad%d9%8a-%d8%a8%d8%ae%d8%b5%d9%88%d8%b5-%d8%a7%d9%84%d8%b4%d8%b1%d9%88%d8%b7-%d9%88%d8%a7%d9%84%d8%a5%d8%ac%d8%b1%d8%a7%d8%a1%d8%a7/" target="_blank" class="w-full md:w-auto flex items-center justify-center gap-2 bg-emerald-100 text-emerald-800 px-6 py-3 rounded-xl font-bold text-xs md:text-sm hover:bg-emerald-200 transition-colors shadow-sm active:scale-95">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path></svg>
+                                المنشور الوزاري الرسمي
+                            </a>
+
+                            <div class="text-center md:text-left bg-gray-50 px-4 py-2 rounded-lg border border-gray-200 w-full md:w-auto">
+                                <p class="text-[10px] text-gray-500 font-medium">تصميم وتطوير</p>
+                                <p class="text-xs font-bold text-gray-800">الأستاذ حكيم بوزورداز &copy; 2026</p>
                             </div>
                         </div>
                     </div>
-
-                    <!-- حقوق المشاركة -->
-                    <div class="border border-slate-200 rounded-lg overflow-hidden">
-                        <div class="bg-slate-50 px-4 py-3 border-b border-slate-200 flex items-center justify-between">
-                            <div class="flex items-center gap-2">
-                                <svg class="w-5 h-5 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path></svg>
-                                <h3 class="font-bold text-slate-800">حقوق المشاركة (الدفع)</h3>
-                            </div>
-                            <span id="result-fees" class="font-bold text-lg text-emerald-700 bg-emerald-50 px-3 py-0.5 rounded border border-emerald-200">-- دج</span>
-                        </div>
-                        <div class="p-4">
-                            <p class="text-sm text-slate-600">الدفع إلزامي وحصري عبر البطاقة الذهبية لبريد الجزائر من خلال المنصة الرقمية (<span class="font-mono text-xs bg-slate-100 px-1">epay.education.gov.dz</span>).</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 3. شاشة القوانين -->
-            <div id="tab-rules" class="hidden fade-in">
-                <div class="bg-slate-50 p-5 md:p-8 border-b border-slate-200">
-                    <h2 class="text-xl md:text-2xl font-bold text-slate-800">الضوابط القانونية والتنظيمية</h2>
-                    <p class="text-sm text-slate-500 mt-2">مستخلص من البيان التوضيحي الرسمي لوزارة التربية الوطنية (ماي 2026).</p>
-                </div>
-
-                <div class="p-5 md:p-8 space-y-6 text-sm text-slate-700 leading-loose">
                     
-                    <div class="prose prose-slate max-w-none">
-                        <ul class="list-disc list-inside space-y-2">
-                            <li><strong>تاريخ إجراء الامتحان المهني:</strong> 11 جويلية 2026.</li>
-                            <li><strong>آخر أجل للتسجيل الرقمي:</strong> يُغلق باب إيداع الطلبات يوم <strong>31 ماي 2026</strong> كآخر أجل.</li>
-                            <li><strong>احتساب الأقدمية:</strong> تُحسب لغاية تاريخ الامتحان (11 جويلية). ويُطبق قانون الجمع بين الأقدمية المكتسبة في الرتبة الأصلية ورتبة الإدماج (حسب المرسوم التنفيذي 54/25 والمادة 63).</li>
-                            <li><strong>التسجيل الحصري:</strong> تتم كافة الإجراءات حصرياً عبر الأرضية الرقمية (<a href="https://mowadaf.education.dz" class="text-blue-600 underline font-mono" target="_blank">mowadaf.education.dz</a>).</li>
-                        </ul>
-                    </div>
-
-                    <div>
-                        <h3 class="font-bold text-slate-800 mb-3 border-b pb-2">جدول رسوم المشاركة</h3>
-                        <table class="w-full info-table text-sm">
-                            <tr><th class="w-2/3">الصنف المالي للرتبة الممتحن إليها</th><th class="w-1/3">مبلغ الدفع</th></tr>
-                            <tr><td>الصنف 13 فما أقل</td><td class="font-bold">200 د.ج</td></tr>
-                            <tr><td>من الصنف 14 إلى 16</td><td class="font-bold">300 د.ج</td></tr>
-                            <tr><td>الصنف 17 فما فوق</td><td class="font-bold">400 د.ج</td></tr>
-                        </table>
-                    </div>
-
-                    <div class="pt-6 mt-6 border-t border-slate-200">
-                        <a href="https://www.education.gov.dz/2026/05/09/%d8%a8%d9%8a%d9%80%d9%80%d8%a7%d9%86-%d8%aa%d9%88%d8%b6%d9%8a%d8%ad%d9%8a-%d8%a8%d8%ae%d8%b5%d9%88%d8%b5-%d8%a7%d9%84%d8%b4%d8%b1%d9%88%d8%b7-%d9%88%d8%a7%d9%84%d8%a5%d8%ac%d8%b1%d8%a7%d8%a1%d8%a7/" target="_blank" class="inline-flex items-center justify-center gap-2 bg-slate-100 border border-slate-300 text-slate-800 px-5 py-2.5 rounded-md font-bold text-sm hover:bg-slate-200 transition-colors w-full sm:w-auto">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
-                            الاطلاع على المنشور الوزاري الأصلي
-                        </a>
-                    </div>
-
                 </div>
-            </div>
+            </main>
 
-            <!-- حقوق المطور للموبايل -->
-            <div class="md:hidden border-t border-slate-100 p-4 text-center pb-24">
-                <p class="text-[10px] text-slate-400 font-medium">تصميم وتطوير</p>
-                <p class="text-xs font-bold text-slate-600">الأستاذ حكيم بوزورداز &copy; 2026</p>
-            </div>
-            
-        </main>
+            <!-- شريط التنقل السفلي للموبايل (Mobile Only) -->
+            <nav class="md:hidden bg-white border-t flex justify-around p-2 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] absolute bottom-0 w-full z-30 pb-4 shrink-0">
+                <button onclick="switchTab('tab-input')" id="btn-tab-input" class="flex flex-col items-center p-2 text-emerald-700 transition-colors flex-1">
+                    <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+                    <span class="text-[10px] font-bold">البيانات</span>
+                </button>
+                <button onclick="switchTab('tab-result')" id="btn-tab-result" class="flex flex-col items-center p-2 text-gray-400 hover:text-emerald-600 transition-colors relative flex-1">
+                    <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    <span class="text-[10px] font-bold">النتيجة</span>
+                    <span id="badge-result" class="hidden absolute top-1 left-1/2 ml-1 w-2.5 h-2.5 bg-red-500 border-2 border-white rounded-full"></span>
+                </button>
+                <button onclick="switchTab('tab-rules')" id="btn-tab-rules" class="flex flex-col items-center p-2 text-gray-400 hover:text-emerald-600 transition-colors flex-1">
+                    <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477-4.5 1.253"></path></svg>
+                    <span class="text-[10px] font-bold">القوانين</span>
+                </button>
+            </nav>
 
-        <!-- شريط التنقل السفلي للموبايل (Mobile Only) -->
-        <nav class="md:hidden bg-white border-t border-slate-200 flex justify-around p-1 shadow-[0_-4px_10px_rgba(0,0,0,0.03)] fixed bottom-0 left-0 right-0 z-40 pb-safe">
-            <button onclick="switchTab('tab-input')" id="btn-mobile-input" class="flex flex-col items-center p-2.5 text-emerald-700 transition-colors flex-1 relative">
-                <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-                <span class="text-[10px] font-bold">البيانات</span>
-            </button>
-            <button onclick="switchTab('tab-result')" id="btn-mobile-result" class="flex flex-col items-center p-2.5 text-slate-400 hover:text-emerald-600 transition-colors flex-1 relative">
-                <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                <span class="text-[10px] font-bold">التقرير</span>
-                <span id="badge-mobile-result" class="hidden absolute top-2 right-1/2 -mr-3 w-2.5 h-2.5 bg-red-500 border-2 border-white rounded-full"></span>
-            </button>
-            <button onclick="switchTab('tab-rules')" id="btn-mobile-rules" class="flex flex-col items-center p-2.5 text-slate-400 hover:text-emerald-600 transition-colors flex-1 relative">
-                <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477-4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
-                <span class="text-[10px] font-bold">القوانين</span>
-            </button>
-        </nav>
-
+        </div>
     </div>
 
     <script>
         let hasAccount = '';
         let targetCategory = '';
         
-        // Navigation Logic
+        // Navigation Logic (Responsive)
         function switchTab(tabId) {
             // Hide all tabs
             ['tab-input', 'tab-result', 'tab-rules'].forEach(id => {
@@ -280,34 +246,48 @@
             // Show target tab
             document.getElementById(tabId).classList.remove('hidden');
 
-            // Mobile Navigation styling
-            ['btn-mobile-input', 'btn-mobile-result', 'btn-mobile-rules'].forEach(id => {
+            // Reset Mobile Navigation styles
+            ['btn-tab-input', 'btn-tab-result', 'btn-tab-rules'].forEach(id => {
                 const btn = document.getElementById(id);
-                if(btn) { btn.classList.remove('text-emerald-700'); btn.classList.add('text-slate-400'); }
+                if(btn) {
+                    btn.classList.remove('text-emerald-700');
+                    btn.classList.add('text-gray-400');
+                }
             });
-            const activeMobileBtn = document.getElementById(`btn-mobile-${tabId.replace('tab-', '')}`);
-            if(activeMobileBtn) { activeMobileBtn.classList.remove('text-slate-400'); activeMobileBtn.classList.add('text-emerald-700'); }
+            // Set active Mobile Navigation style
+            const activeMobileBtn = document.getElementById(`btn-${tabId}`);
+            if(activeMobileBtn) {
+                activeMobileBtn.classList.remove('text-gray-400');
+                activeMobileBtn.classList.add('text-emerald-700');
+            }
 
-            // Desktop Navigation styling
+            // Reset Desktop Navigation styles
             ['btn-desktop-input', 'btn-desktop-result', 'btn-desktop-rules'].forEach(id => {
                 const btn = document.getElementById(id);
-                if(btn) { btn.classList.remove('desktop-tab-active'); btn.classList.add('desktop-tab-inactive'); }
+                if(btn) {
+                    btn.classList.remove('desktop-tab-active');
+                    btn.classList.add('desktop-tab-inactive');
+                }
             });
+            // Set active Desktop Navigation style
             const activeDesktopBtn = document.getElementById(`btn-desktop-${tabId.replace('tab-', '')}`);
-            if(activeDesktopBtn) { activeDesktopBtn.classList.remove('desktop-tab-inactive'); activeDesktopBtn.classList.add('desktop-tab-active'); }
+            if(activeDesktopBtn) {
+                activeDesktopBtn.classList.remove('desktop-tab-inactive');
+                activeDesktopBtn.classList.add('desktop-tab-active');
+            }
 
-            // Remove badges when Result is visited
+            // Remove notification badges when result is visited
             if(tabId === 'tab-result') {
-                document.getElementById('badge-mobile-result')?.classList.add('hidden');
+                document.getElementById('badge-result')?.classList.add('hidden');
                 document.getElementById('badge-desktop-result')?.classList.add('hidden');
             }
 
+            // Scroll to top of the scrollable area
             document.getElementById('main-scroll-area').scrollTop = 0;
-            window.scrollTo(0,0);
         }
 
         function goToResult() {
-            document.getElementById('badge-mobile-result')?.classList.remove('hidden');
+            document.getElementById('badge-result')?.classList.remove('hidden');
             document.getElementById('badge-desktop-result')?.classList.remove('hidden');
             switchTab('tab-result');
         }
@@ -321,13 +301,14 @@
             if (!dateInput) return;
 
             const joinDate = new Date(dateInput);
-            const examDate = new Date('2026-07-11'); // تاريخ الامتحان الرسمي
+            const examDate = new Date('2026-07-11');
             
             if (joinDate >= examDate) {
-                showSeniorityResult(resultDiv, resultEligibility, "تاريخ التعيين غير صالح. يجب أن يكون قبل 11 جويلية 2026.", false);
+                showSeniorityResult(resultDiv, resultEligibility, "تاريخ التعيين غير منطقي. يجب أن يكون قبل 11 جويلية 2026.", false);
                 return;
             }
 
+            // حساب دقيق للسنوات والأشهر والأيام
             let years = examDate.getFullYear() - joinDate.getFullYear();
             let months = examDate.getMonth() - joinDate.getMonth();
             let days = examDate.getDate() - joinDate.getDate();
@@ -342,20 +323,20 @@
                 months += 12;
             }
 
-            let text = `الأقدمية المحتسبة: <strong>${years} سنة</strong>`;
+            let text = `أقدميتك يوم الامتحان: ${years} سنة`;
             if (months > 0) text += ` و ${months} أشهر`;
             if (days > 0) text += ` و ${days} أيام`;
 
             if (years >= 5) {
-                showSeniorityResult(resultDiv, resultEligibility, `✅ الأقدمية مستوفاة. (${text})<br><span class="text-xs font-normal mt-1 block text-slate-600">شرط الـ 5 سنوات الأساسي متوفر. تأكد من تطابق رتبتك مع شروط الترقية في المنشور.</span>`, true);
+                showSeniorityResult(resultDiv, resultEligibility, `✅ مستوفى! ${text} (أكبر من 5 سنوات)`, true);
             } else {
-                showSeniorityResult(resultDiv, resultEligibility, `❌ الأقدمية غير مستوفاة. (${text})<br><span class="text-xs font-normal mt-1 block text-slate-600">أنت بحاجة لـ 5 سنوات على الأقل. قد يُسمح لك بالمشاركة إذا كان لديك إدماج سابق أو امتيازات الخدمة الوطنية لتعويض النقص.</span>`, false);
+                showSeniorityResult(resultDiv, resultEligibility, `❌ غير مستوفى! ${text} (تحتاج 5 سنوات). يمكن تعويض النقص بدمج الأقدمية أو الخدمة الوطنية حسب القانون.`, false);
             }
         }
 
         function showSeniorityResult(div, resEl, msg, isSuccess) {
             div.classList.remove('hidden', 'bg-emerald-50', 'text-emerald-800', 'border-emerald-200', 'bg-red-50', 'text-red-800', 'border-red-200');
-            resEl.classList.remove('bg-emerald-50', 'text-emerald-800', 'border-emerald-200', 'bg-red-50', 'text-red-800', 'border-red-200', 'bg-slate-50', 'text-slate-500');
+            resEl.classList.remove('bg-emerald-50', 'text-emerald-800', 'border-emerald-200', 'bg-red-50', 'text-red-800', 'border-red-200', 'bg-gray-50', 'text-gray-500');
             
             div.innerHTML = msg;
             resEl.innerHTML = msg;
@@ -377,16 +358,21 @@
             const yesInput = document.querySelector('input[value="yes"]');
             const noInput = document.querySelector('input[value="no"]');
 
-            yesLabel.classList.remove('radio-card-active');
-            noLabel.classList.remove('radio-card-active');
+            // Reset styles
+            yesLabel.classList.remove('bg-emerald-50', 'border-emerald-500', 'shadow-md');
+            noLabel.classList.remove('bg-emerald-50', 'border-emerald-500', 'shadow-md');
+            yesLabel.classList.add('border-gray-200');
+            noLabel.classList.add('border-gray-200');
 
             if (value === 'yes') {
                 yesInput.checked = true;
-                yesLabel.classList.add('radio-card-active');
+                yesLabel.classList.add('bg-emerald-50', 'border-emerald-500', 'shadow-md');
+                yesLabel.classList.remove('border-gray-200');
                 renderAccountSteps(true);
             } else {
                 noInput.checked = true;
-                noLabel.classList.add('radio-card-active');
+                noLabel.classList.add('bg-emerald-50', 'border-emerald-500', 'shadow-md');
+                noLabel.classList.remove('border-gray-200');
                 renderAccountSteps(false);
             }
         };
@@ -394,23 +380,9 @@
         function renderAccountSteps(hasAcc) {
             const div = document.getElementById('result-account-steps');
             if (hasAcc) {
-                div.innerHTML = `
-                    <p class="mb-2"><strong class="text-emerald-700">الوضعية سليمة:</strong> لا تحتاج لإنشاء حساب جديد.</p>
-                    <ul class="list-decimal list-inside space-y-1 text-sm text-slate-700">
-                        <li>الولوج للمنصة الرقمية بمعلومات فضاء الموظف/الأستاذ المعتادة.</li>
-                        <li>الضغط على خيار المشاركة في الامتحانات المهنية.</li>
-                        <li>استخراج استمارة التسجيل ووصل الدفع.</li>
-                    </ul>
-                `;
+                div.innerHTML = `<strong class="text-emerald-700 block mb-1">حسابك جاهز</strong>قم بالولوج للمنصة وتأكيد المشاركة وسحب الاستمارة ووصل الدفع.`;
             } else {
-                div.innerHTML = `
-                    <p class="mb-2"><strong class="text-red-700">إجراء إلزامي:</strong> يجب إنشاء حساب جديد فوراً وقبل تاريخ 31 ماي.</p>
-                    <ul class="list-decimal list-inside space-y-1 text-sm text-slate-700">
-                        <li>الولوج إلى الرابط: <a href="https://mowadaf.education.dz" class="text-blue-600 underline" target="_blank">mowadaf.education.dz</a>.</li>
-                        <li>إدخال البيانات بصفة مطابقة <strong>حرفياً</strong> لشهادة العمل (الاسم، اللقب، تاريخ التعيين).</li>
-                        <li>طباعة استمارة معلومات طلب إنشاء الحساب وتقديمها لمدير المؤسسة للتفعيل (حسب المنشور).</li>
-                    </ul>
-                `;
+                div.innerHTML = `<strong class="text-red-600 block mb-1">يجب إنشاء حساب فوراً</strong>ادخل للمنصة وأدخل بياناتك مطابقة لشهادة العمل تماماً لتفعيل الحساب (يتم التفعيل من طرف المدير للمؤسسات التعليمية).`;
             }
         }
 
