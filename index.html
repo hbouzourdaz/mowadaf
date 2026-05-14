@@ -6,7 +6,21 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="theme-color" content="#047857">
     <title>تطبيق الامتحانات المهنية 2026</title>
+    
+    <!-- استدعاء Tailwind CSS بالطريقة الموصى بها للسيرفرات (محدث) -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Tajawal', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Tajawal', sans-serif; background-color: #e2e8f0; }
@@ -22,6 +36,12 @@
     </style>
 </head>
 <body class="bg-gray-200 flex items-center justify-center min-h-screen">
+
+    <!-- رسالة تحذيرية تظهر فقط في حال حظر المتصفح لملفات CSS -->
+    <div id="css-warning" style="position: fixed; top: 0; left: 0; right: 0; background-color: #fef2f2; color: #991b1b; padding: 15px; text-align: center; border-bottom: 2px solid #dc2626; z-index: 9999; font-family: sans-serif; font-weight: bold; font-size: 14px;">
+        ⚠️ عذراً! لم يتم تحميل تصميم الموقع.<br>
+        <span style="font-weight: normal; font-size: 12px; margin-top: 5px; display: block;">يرجى التأكد من اتصالك بالإنترنت، وتعطيل أي مانع إعلانات (Adblocker) قد يمنع تحميل مكتبة Tailwind.</span>
+    </div>
 
     <!-- إطار التطبيق: مخصص ليكون بحجم شاشة هاتف فقط (عرض أقصى 400px) -->
     <div id="app-container" class="relative w-full h-screen max-w-[400px] mx-auto bg-slate-50 shadow-2xl overflow-hidden flex flex-col">
@@ -94,7 +114,6 @@
                             <option value="r9">ملحق رئيسي بالمخابر</option>
                             <option value="r14">مقتصد</option>
                             <option value="r32">مساعد رئيسي للمصالح الاقتصادية</option>
-                            <!-- اختصار للقائمة لتناسب التطبيق، يمكنك إضافة الباقي -->
                         </optgroup>
                     </select>
                 </div>
@@ -234,7 +253,7 @@
 
             <!-- زر القوانين -->
             <button onclick="switchTab('tab-rules', this)" class="nav-btn text-gray-400 hover:text-gray-800 flex flex-col items-center justify-center w-20 py-1 transition-colors">
-                <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+                <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477-4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
                 <span class="text-[10px] font-bold">القوانين</span>
             </button>
         </nav>
@@ -244,6 +263,13 @@
     </div>
 
     <script>
+        // إخفاء رسالة التحذير بمجرد تفعيل التصميم
+        window.onload = function() {
+            if (window.tailwind) {
+                document.getElementById('css-warning').style.display = 'none';
+            }
+        };
+
         // Data Base
         const ranksData = {
             "r1": { target: "ناظر في التعليم الابتدائي", years: 5, fee: "200" },
